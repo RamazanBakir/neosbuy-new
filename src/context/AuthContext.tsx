@@ -1,12 +1,13 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
+import { SHA256 } from 'crypto-js'
 
 interface AuthContextType {
   user: User | null
   loading: boolean
-  signInWithGoogle: () => Promise<void>
-  signInWithEmail: (email: string) => Promise<void>
+  signUp: (email: string, password: string) => Promise<{ error: string | null }>
+  signIn: (email: string, password: string) => Promise<{ error: string | null }>
   signOut: () => Promise<void>
 }
 
@@ -31,23 +32,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  const signInWithGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin
-      }
-    })
+  const hashPassword = (password: string) => {
+    return SHA256(password).toString()
   }
 
-  const signInWithEmail = async (email: string) => {
-    const { error } = await supabase.auth.signInWithOtp({
+  const signUp = async (email: string, password: string) => {
+    const hashedPassword = hashPassword(password)
+    const { error } = await supabase.auth.signUp({
       email,
-      options: {
-        emailRedirectTo: window.location.origin
-      }
+      password: hashedPassword
     })
-    if (error) throw error
+    if (error) {
+      return { error: error.message }
+    }
+    return { error: null }
+  }
+
+  const signIn = async (email: string, password: string) => {
+    const hashedPassword = hashPassword(password)
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password: hashedPassword
+    })
+    if (error) {
+      return { error: error.message }
+    }
+    return { error: null }
   }
 
   const signOut = async () => {
@@ -55,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signInWithEmail, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signUp, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   )
