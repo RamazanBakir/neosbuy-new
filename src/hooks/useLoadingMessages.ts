@@ -44,13 +44,12 @@ export const useLoadingMessages = () => {
     if (!isComplete) return
 
     const timeout = setTimeout(() => {
-      const currentIndex = loadingMessages.indexOf(currentMessage)
-      const nextIndex = Math.floor(Math.random() * loadingMessages.length)
-      setCurrentMessage(loadingMessages[nextIndex])
+      const randomIndex = Math.floor(Math.random() * loadingMessages.length)
+      setCurrentMessage(loadingMessages[randomIndex])
     }, 2000)
 
     return () => clearTimeout(timeout)
-  }, [isComplete, currentMessage])
+  }, [isComplete])
 
   return displayedMessage
 } 

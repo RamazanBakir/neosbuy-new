@@ -1,16 +1,6 @@
 import { useState } from 'react'
 import { PaperAirplaneIcon } from '@heroicons/react/24/solid'
 
-interface ProductSearchResponse {
-  products: Array<{
-    title: string
-    price: number
-    image: string
-    url: string
-  }>
-  message: string
-}
-
 interface ChatInputProps {
   onSubmit: (message: string) => void
 }
