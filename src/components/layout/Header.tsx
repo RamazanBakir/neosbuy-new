@@ -1,5 +1,7 @@
 import { Bars3Icon, SunIcon, MoonIcon, UserIcon } from '@heroicons/react/24/outline'
 import { useTheme } from '../../context/ThemeContext'
+import { useState } from 'react'
+import AuthModal from '../auth/AuthModal'
 
 interface HeaderProps {
   onMenuClick: () => void
@@ -8,6 +10,7 @@ interface HeaderProps {
 
 export default function Header({ onMenuClick }: HeaderProps) {
   const { theme, toggleTheme } = useTheme()
+  const [isAuthOpen, setIsAuthOpen] = useState(false)
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 h-16">
@@ -32,12 +35,20 @@ export default function Header({ onMenuClick }: HeaderProps) {
               <SunIcon className="h-5 w-5 text-gray-600 dark:text-gray-300" />
             )}
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg">
+          <button
+            onClick={() => setIsAuthOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-gray-900"
+          >
             <UserIcon className="h-5 w-5" />
-            Login
+            <span>Login</span>
           </button>
         </div>
       </div>
+
+      <AuthModal 
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+      />
     </header>
   )
 } 
