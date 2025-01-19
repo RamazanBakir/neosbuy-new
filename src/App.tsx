@@ -1,6 +1,6 @@
 import Layout from './components/layout/Layout'
 import ChatTools from './components/chat/ChatTools'
-import ChatInput from './components/chat/ChatInput'
+import Chat from './components/chat/Chat'
 import { ThemeProvider } from './context/ThemeContext'
 
 export default function App() {
@@ -15,7 +15,7 @@ export default function App() {
             <ChatTools />
           </div>
           <div className="pb-8">
-            <ChatInput />
+            <Chat />
           </div>
         </div>
       </Layout>
