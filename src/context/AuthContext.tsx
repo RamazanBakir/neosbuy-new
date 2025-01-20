@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
-import { SHA256 } from 'crypto-js'
 
 interface AuthContextType {
   user: User | null
@@ -18,13 +17,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Initial session check
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       setLoading(false)
     })
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
     })
@@ -32,32 +29,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  const hashPassword = (password: string) => {
-    return SHA256(password).toString()
-  }
-
   const signUp = async (email: string, password: string) => {
-    const hashedPassword = hashPassword(password)
-    const { error } = await supabase.auth.signUp({
-      email,
-      password: hashedPassword
-    })
-    if (error) {
-      return { error: error.message }
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password
+      })
+      if (error) {
+        console.error('SignUp error:', error)
+        return { error: error.message }
+      }
+      return { error: null }
+    } catch (err) {
+      console.error('Unexpected error during signup:', err)
+      return { error: 'Beklenmeyen bir hata oluştu' }
     }
-    return { error: null }
   }
 
   const signIn = async (email: string, password: string) => {
-    const hashedPassword = hashPassword(password)
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password: hashedPassword
-    })
-    if (error) {
-      return { error: error.message }
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+      if (error) {
+        console.error('SignIn error:', error)
+        return { error: error.message }
+      }
+      return { error: null }
+    } catch (err) {
+      console.error('Unexpected error during signin:', err)
+      return { error: 'Beklenmeyen bir hata oluştu' }
     }
-    return { error: null }
   }
 
   const signOut = async () => {
