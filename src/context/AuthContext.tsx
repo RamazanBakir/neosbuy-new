@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
+import { SHA256 } from 'crypto-js'
 
 interface AuthContextType {
   user: User | null
@@ -29,11 +30,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
+  const hashPassword = (password: string) => {
+    return SHA256(password).toString()
+  }
+
   const signUp = async (email: string, password: string) => {
     try {
+      const hashedPassword = hashPassword(password)
       const { error } = await supabase.auth.signUp({
         email,
-        password
+        password: hashedPassword
       })
       if (error) {
         console.error('SignUp error:', error)
@@ -48,9 +54,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
+      const hashedPassword = hashPassword(password)
       const { error } = await supabase.auth.signInWithPassword({
         email,
-        password
+        password: hashedPassword
       })
       if (error) {
         console.error('SignIn error:', error)
