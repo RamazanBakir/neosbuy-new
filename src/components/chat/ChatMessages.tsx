@@ -145,6 +145,23 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
               </>
             )}
           </div>
+
+          <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Başka bir ürün kategorisi aramak ister misiniz?
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors">
+                Benzer Ürünler
+              </button>
+              <button className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors">
+                İndirimli Ürünler
+              </button>
+              <button className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors">
+                En Çok Satanlar
+              </button> 
+            </div>
+          </div>
         </div>
       </div>
     )
