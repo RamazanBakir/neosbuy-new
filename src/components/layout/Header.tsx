@@ -15,14 +15,6 @@ export default function Header({ onMenuClick }: HeaderProps) {
   const { user, signOut } = useAuth()
   const [isAuthOpen, setIsAuthOpen] = useState(false)
 
-  const handleAuthClick = () => {
-    if (user) {
-      signOut()
-    } else {
-      setIsAuthOpen(true)
-    }
-  }
-
   const handleThemeToggle = () => {
     if (theme === 'system') {
       setTheme('dark')

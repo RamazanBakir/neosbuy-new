@@ -1,3 +1,7 @@
+import { useState } from 'react'
+import { useAuth } from '../../context/AuthContext'
+import AuthModal from '../auth/AuthModal'
+import SettingsModal from '../settings/SettingsModal'
 import { 
   ChatBubbleLeftIcon, 
   ArrowLeftIcon,
@@ -22,6 +26,18 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ onClose }: SidebarProps) {
+  const { user } = useAuth()
+  const [isAuthOpen, setIsAuthOpen] = useState(false)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
+  const handleSettingsClick = () => {
+    if (user) {
+      setIsSettingsOpen(true)
+    } else {
+      setIsAuthOpen(true)
+    }
+  }
+
   return (
     <aside className="h-full bg-gray-50 flex flex-col w-64 min-h-screen">
       {/* Header */}
@@ -69,6 +85,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
             {others.map((item) => (
               <button
                 key={item.label}
+                onClick={item.label === 'Profile & Settings' ? handleSettingsClick : undefined}
                 className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
               >
                 <item.icon className="h-5 w-5" />
@@ -78,6 +95,16 @@ export default function Sidebar({ onClose }: SidebarProps) {
           </div>
         </div>
       </div>
+
+      <AuthModal 
+        isOpen={isAuthOpen} 
+        onClose={() => setIsAuthOpen(false)} 
+      />
+      
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+      />
     </aside>
   )
 } 
