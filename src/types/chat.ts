@@ -1,8 +1,22 @@
-export type MessageType = 'user' | 'assistant'
+export type MessageType = 'user' | 'assistant' | 'error'
+export type ContentType = 'text' | 'products'
+
+export interface BaseProduct {
+  title: string
+  price: number | string
+  description?: string
+  image?: string
+  photo?: string
+  photos?: string[]
+  rating?: number
+  store?: string
+  store_name?: string
+}
 
 export interface ChatMessage {
   id: string
-  type: MessageType
-  content: string
+  type: 'user' | 'assistant' | 'error'
+  messageType?: 'text' | 'products'
+  content: string | BaseProduct[]
   timestamp: Date
 } 
