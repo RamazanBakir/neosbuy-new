@@ -1,6 +1,7 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { UserIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
+import SettingsModal from '../settings/SettingsModal'
 
 interface ProfileDropdownProps {
   email: string | undefined
@@ -8,6 +9,8 @@ interface ProfileDropdownProps {
 }
 
 export default function ProfileDropdown({ email, onSignOut }: ProfileDropdownProps) {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
   return (
     <Menu as="div" className="relative">
       <Menu.Button className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100">
@@ -29,6 +32,7 @@ export default function ProfileDropdown({ email, onSignOut }: ProfileDropdownPro
             <Menu.Item>
               {({ active }) => (
                 <button
+                  onClick={() => setIsSettingsOpen(true)}
                   className={`${
                     active ? 'bg-gray-100 dark:bg-gray-700' : ''
                   } flex w-full items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300`}
@@ -54,6 +58,11 @@ export default function ProfileDropdown({ email, onSignOut }: ProfileDropdownPro
           </div>
         </Menu.Items>
       </Transition>
+
+      <SettingsModal 
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+      />
     </Menu>
   )
 } 

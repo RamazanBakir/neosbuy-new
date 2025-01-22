@@ -30,16 +30,19 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
 
   const renderProductList = (products: BaseProduct[]) => {
     const nextSlide = () => {
-      setCurrentSlide((prev) => (prev + 1) % Math.ceil(products.length / 2))
+      setCurrentSlide((prev) => (prev + 1) % Math.ceil(products.length / (viewMode === 'grid' ? 2 : 3)))
     }
 
     const prevSlide = () => {
       setCurrentSlide((prev) => 
-        prev === 0 ? Math.ceil(products.length / 2) - 1 : prev - 1
+        prev === 0 ? Math.ceil(products.length / (viewMode === 'grid' ? 2 : 3)) - 1 : prev - 1
       )
     }
 
-    const visibleProducts = products.slice(currentSlide * 2, currentSlide * 2 + 2)
+    const visibleProducts = products.slice(
+      currentSlide * (viewMode === 'grid' ? 2 : 3), 
+      currentSlide * (viewMode === 'grid' ? 2 : 3) + (viewMode === 'grid' ? 2 : 3)
+    )
 
     return (
       <div className="w-full max-w-2xl mx-auto">
@@ -68,21 +71,22 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
               </button>
             </div>
             <span className="text-sm text-gray-500">
-              {currentSlide * 2 + 1}-{Math.min((currentSlide * 2) + 2, products.length)} / {products.length}
+              {currentSlide * (viewMode === 'grid' ? 2 : 3) + 1}-
+              {Math.min((currentSlide * (viewMode === 'grid' ? 2 : 3)) + (viewMode === 'grid' ? 2 : 3), products.length)} / {products.length}
             </span>
           </div>
 
-          <div className="relative min-h-[400px]">
+          <div className="relative min-h-[400px] w-full">
             <div className={`${
               viewMode === 'grid' 
                 ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' 
                 : 'flex flex-col space-y-4'
-            }`}>
+            } w-full max-w-2xl mx-auto`}>
               {visibleProducts.map((product, index) => (
                 <div key={index} className={`${
                   viewMode === 'grid' 
-                    ? 'flex flex-col' 
-                    : 'flex flex-row space-x-4'
+                    ? 'flex flex-col w-full max-w-xs mx-auto' 
+                    : 'flex flex-row space-x-4 w-full'
                 }`}>
                   <div 
                     className={`relative overflow-hidden rounded-lg group cursor-pointer ${
