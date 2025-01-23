@@ -14,6 +14,14 @@ import {
 import { useState, useEffect } from 'react'
 import ImageViewer from '../common/ImageViewer'
 
+const LoadingDots = () => (
+  <div className="flex space-x-1">
+    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+  </div>
+)
+
 type ViewMode = 'grid' | 'list'
 
 interface ChatMessagesProps {
@@ -208,52 +216,46 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
     )
   }
 
-  const renderMessage = (message: ChatMessage) => {
-    if (message.type === 'assistant' && message.messageType === 'products') {
-      return renderProductList(message.content as BaseProduct[], message.id)
-    }
-
-    return (
-      <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-        <div className={`max-w-3xl rounded-lg px-4 py-2 ${
-          message.type === 'user' 
-            ? 'bg-blue-500 text-white' 
-            : message.type === 'error'
-              ? 'bg-red-50 text-red-500'
-              : 'bg-gray-100 dark:bg-gray-800'
-        }`}>
-          <p className="text-sm">{message.content}</p>
-          {message.type === 'assistant' && !message.messageType && (
-            <div className="mt-2 flex items-center space-x-2 text-xs text-gray-500">
-              <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded">
-                <ClipboardIcon className="h-4 w-4" />
-              </button>
-              <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded">
-                <SpeakerWaveIcon className="h-4 w-4" />
-              </button>
-              <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded">
-                <GlobeAltIcon className="h-4 w-4" />
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    )
-  }
-
   return (
     <>
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
           <div key={message.id}>
-            {renderMessage(message)}
+            {message.type === 'assistant' && message.messageType === 'products' && Array.isArray(message.content) ? (
+              renderProductList(message.content, message.id)
+            ) : (
+              <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-3xl rounded-lg px-4 py-2 ${
+                  message.type === 'user' 
+                    ? 'bg-blue-500 text-white' 
+                    : message.type === 'error'
+                      ? 'bg-red-50 text-red-500'
+                      : 'bg-gray-100 dark:bg-gray-800'
+                }`}>
+                  {typeof message.content === 'string' && <p className="text-sm">{message.content}</p>}
+                  {message.type === 'assistant' && !message.messageType && (
+                    <div className="mt-2 flex items-center space-x-2 text-xs text-gray-500">
+                      <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded">
+                        <ClipboardIcon className="h-4 w-4" />
+                      </button>
+                      <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded">
+                        <SpeakerWaveIcon className="h-4 w-4" />
+                      </button>
+                      <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded">
+                        <GlobeAltIcon className="h-4 w-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         ))}
         
         {isLoading && (
           <div className="flex items-center space-x-2 text-gray-500">
             <LoadingDots />
-            <p>{displayedMessage}</p>
+            <p>{typeof displayedMessage === 'string' ? displayedMessage : ''}</p>
           </div>
         )}
       </div>
