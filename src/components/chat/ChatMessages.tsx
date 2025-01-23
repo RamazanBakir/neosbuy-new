@@ -236,18 +236,18 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                   {typeof message.content === 'string' && <p className="text-sm">{message.content}</p>}
                   {message.type === 'assistant' && !message.messageType && (
                     <div className="mt-2 flex items-center space-x-2 text-xs text-gray-500">
-                      <Tooltip text="Metni Kopyala">
-                        <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded">
+                      <Tooltip text="Metni Kopyala" position="bottom">
+                        <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200">
                           <ClipboardIcon className="h-4 w-4" />
                         </button>
                       </Tooltip>
-                      <Tooltip text="Sesli Dinle">
-                        <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded">
+                      <Tooltip text="Sesli Dinle" position="bottom">
+                        <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200">
                           <SpeakerWaveIcon className="h-4 w-4" />
                         </button>
                       </Tooltip>
-                      <Tooltip text="Çeviri">
-                        <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded">
+                      <Tooltip text="Çeviri" position="bottom">
+                        <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200">
                           <GlobeAltIcon className="h-4 w-4" />
                         </button>
                       </Tooltip>
