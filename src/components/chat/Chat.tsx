@@ -12,9 +12,19 @@ interface ChatProps {
   activeSessionId: string | null
   sessions: ChatSession[]
   onUpdateSession: (sessionId: string, messages: ChatMessage | ChatMessage[]) => void
+  onUpdateSessionTitle: (sessionId: string, title: string) => void
+  setSessions: React.Dispatch<React.SetStateAction<ChatSession[]>>
+  setActiveSessionId: (id: string | null) => void
 }
 
-export default function Chat({ activeSessionId, sessions, onUpdateSession }: ChatProps) {
+export default function Chat({ 
+  activeSessionId, 
+  sessions, 
+  onUpdateSession, 
+  onUpdateSessionTitle,
+  setSessions,
+  setActiveSessionId 
+}: ChatProps) {
   const { user } = useAuth()
   const { hasReachedLimit, incrementCount, remainingQuestions } = useQuestionLimit()
   const [isLoading, setIsLoading] = useState(false)
@@ -35,10 +45,24 @@ export default function Chat({ activeSessionId, sessions, onUpdateSession }: Cha
   })
 
   const handleNewMessage = async (content: string) => {
-    if (!activeSessionId) return
     if (hasReachedLimit) {
       setIsLimitExceededOpen(true)
       return
+    }
+
+    let currentSessionId = activeSessionId
+    const isNewSession = !currentSessionId
+
+    if (isNewSession) {
+      const newSession: ChatSession = {
+        id: Date.now().toString(),
+        title: 'Yeni Sohbet',
+        createdAt: new Date(),
+        messages: []
+      }
+      setSessions(prev => [newSession, ...prev])
+      setActiveSessionId(newSession.id)
+      currentSessionId = newSession.id
     }
 
     const userMessage: ChatMessage = {
@@ -48,14 +72,17 @@ export default function Chat({ activeSessionId, sessions, onUpdateSession }: Cha
       timestamp: new Date()
     }
 
-    // Update session
-    onUpdateSession(activeSessionId, userMessage)
+    onUpdateSession(currentSessionId, userMessage)
     setIsLoading(true)
 
     try {
       incrementCount()
       const response = await searchProducts(content)
       
+      // Session başlığını güncelle
+      const shortTitle = response.aiSummary.split(' ').slice(0, 3).join(' ')
+      onUpdateSessionTitle(currentSessionId, shortTitle)
+
       const aiSummaryMessage: ChatMessage = {
         id: (Date.now() + 1).toString(), 
         type: 'assistant',
@@ -71,8 +98,7 @@ export default function Chat({ activeSessionId, sessions, onUpdateSession }: Cha
         timestamp: new Date()
       }
 
-      // Update session with both messages
-      onUpdateSession(activeSessionId, [aiSummaryMessage, productsMessage])
+      onUpdateSession(currentSessionId, [aiSummaryMessage, productsMessage])
     } catch (error) {
       console.error('Search error:', error)
       const errorMessage: ChatMessage = {
@@ -81,7 +107,7 @@ export default function Chat({ activeSessionId, sessions, onUpdateSession }: Cha
         content: 'Üzgünüm, arama sırasında bir hata oluştu. Lütfen tekrar deneyin.',
         timestamp: new Date()
       }
-      onUpdateSession(activeSessionId, errorMessage)
+      onUpdateSession(currentSessionId, errorMessage)
     } finally {
       setIsLoading(false)
     }

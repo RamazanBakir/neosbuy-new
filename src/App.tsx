@@ -53,6 +53,24 @@ export default function App() {
     }))
   }
 
+  const handleUpdateSessionTitle = (sessionId: string, title: string) => {
+    setSessions(prev => prev.map(session => {
+      if (session.id === sessionId) {
+        return { ...session, title }
+      }
+      return session
+    }))
+  }
+
+  const handleDeleteSession = (sessionId: string) => {
+    setSessions(prev => prev.filter(session => session.id !== sessionId))
+    if (activeSessionId === sessionId) {
+      // Silinen session aktifse, başka bir session'a geç veya null yap
+      const remainingSessions = sessions.filter(s => s.id !== sessionId)
+      setActiveSessionId(remainingSessions[0]?.id || null)
+    }
+  }
+
   return (
     <AuthProvider>
       <ThemeProvider>
@@ -61,6 +79,8 @@ export default function App() {
           activeSessionId={activeSessionId}
           onNewSession={handleNewSession}
           onSessionSelect={setActiveSessionId}
+          onUpdateSessionTitle={handleUpdateSessionTitle}
+          onDeleteSession={handleDeleteSession}
         >
           <div className="flex flex-col h-full">
             <div className="flex-1">
@@ -74,6 +94,9 @@ export default function App() {
                 sessions={sessions}
                 activeSessionId={activeSessionId}
                 onUpdateSession={handleUpdateSession}
+                onUpdateSessionTitle={handleUpdateSessionTitle}
+                setSessions={setSessions}
+                setActiveSessionId={setActiveSessionId}
               />
             </div>
           </div>

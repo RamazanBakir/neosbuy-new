@@ -9,6 +9,8 @@ interface LayoutProps {
   activeSessionId: string | null
   onNewSession: () => void
   onSessionSelect: (sessionId: string) => void
+  onUpdateSessionTitle: (sessionId: string, title: string) => void
+  onDeleteSession: (sessionId: string) => void
 }
 
 export default function Layout({ 
@@ -16,7 +18,9 @@ export default function Layout({
   sessions, 
   activeSessionId, 
   onNewSession, 
-  onSessionSelect 
+  onSessionSelect, 
+  onUpdateSessionTitle, 
+  onDeleteSession 
 }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
@@ -39,6 +43,8 @@ export default function Layout({
             onSessionSelect={onSessionSelect}
             onNewSession={onNewSession}
             onClose={() => setIsSidebarOpen(false)} 
+            onUpdateSessionTitle={onUpdateSessionTitle}
+            onDeleteSession={onDeleteSession}
           />
         </div>
       )}

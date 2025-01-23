@@ -10,7 +10,8 @@ import {
   QuestionMarkCircleIcon,
   Cog6ToothIcon,
   PlusIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
+  TrashIcon
 } from '@heroicons/react/24/outline'
 
 const tools = [
@@ -29,6 +30,8 @@ interface SidebarProps {
   activeSessionId: string | null
   onSessionSelect: (sessionId: string) => void
   onNewSession: () => void
+  onUpdateSessionTitle: (sessionId: string, title: string) => void
+  onDeleteSession: (sessionId: string) => void
   onClose: () => void
 }
 
@@ -37,12 +40,16 @@ export default function Sidebar({
   activeSessionId, 
   onSessionSelect, 
   onNewSession,
+  onUpdateSessionTitle,
+  onDeleteSession,
   onClose 
 }: SidebarProps) {
   const { user } = useAuth()
   const [isAuthOpen, setIsAuthOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isAIChatOpen, setIsAIChatOpen] = useState(true)
+  const [editingSessionId, setEditingSessionId] = useState<string | null>(null)
+  const [editTitle, setEditTitle] = useState('')
 
   const handleSettingsClick = () => {
     if (user) {
@@ -50,6 +57,23 @@ export default function Sidebar({
     } else {
       setIsAuthOpen(true)
     }
+  }
+
+  const handleEditStart = (session: ChatSession) => {
+    setEditingSessionId(session.id)
+    setEditTitle(session.title)
+  }
+
+  const handleEditSave = () => {
+    if (editingSessionId && editTitle.trim()) {
+      onUpdateSessionTitle(editingSessionId, editTitle.trim())
+      setEditingSessionId(null)
+    }
+  }
+
+  const handleEditCancel = () => {
+    setEditingSessionId(null)
+    setEditTitle('')
   }
 
   return (
@@ -100,18 +124,45 @@ export default function Sidebar({
                 </button>
 
                 {sessions.map((session) => (
-                  <button
-                    key={session.id}
-                    onClick={() => onSessionSelect(session.id)}
-                    className={`flex items-center w-full px-3 py-2 text-sm rounded-lg ${
-                      session.id === activeSessionId
-                        ? 'bg-gray-100 text-gray-900'
-                        : 'text-gray-600 hover:bg-gray-100'
-                    }`}
-                  >
-                    <ChatBubbleLeftIcon className="h-4 w-4 mr-2" />
-                    <span className="truncate">{session.title}</span>
-                  </button>
+                  <div key={session.id} className="group flex items-center">
+                    {editingSessionId === session.id ? (
+                      <div className="flex-1 px-3 py-2">
+                        <input
+                          type="text"
+                          value={editTitle}
+                          onChange={(e) => setEditTitle(e.target.value)}
+                          onBlur={handleEditSave}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleEditSave()
+                            if (e.key === 'Escape') handleEditCancel()
+                          }}
+                          className="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          autoFocus
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => onSessionSelect(session.id)}
+                          onDoubleClick={() => handleEditStart(session)}
+                          className={`flex-1 flex items-center px-3 py-2 text-sm rounded-lg ${
+                            session.id === activeSessionId
+                              ? 'bg-gray-100 text-gray-900'
+                              : 'text-gray-600 hover:bg-gray-100'
+                          }`}
+                        >
+                          <ChatBubbleLeftIcon className="h-4 w-4 mr-2" />
+                          <span className="truncate">{session.title}</span>
+                        </button>
+                        <button
+                          onClick={() => onDeleteSession(session.id)}
+                          className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-red-500"
+                        >
+                          <TrashIcon className="h-4 w-4" />
+                        </button>
+                      </>
+                    )}
+                  </div>
                 ))}
               </div>
             )}
