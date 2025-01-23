@@ -19,4 +19,11 @@ export interface ChatMessage {
   messageType?: 'text' | 'products'
   content: string | BaseProduct[]
   timestamp: Date
+}
+
+export interface ChatSession {
+  id: string
+  title: string
+  createdAt: Date
+  messages: ChatMessage[]
 } 

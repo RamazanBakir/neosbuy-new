@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
+import { ChatSession } from '../../types/chat'
 import AuthModal from '../auth/AuthModal'
 import SettingsModal from '../settings/SettingsModal'
 import { 
@@ -7,7 +8,9 @@ import {
   ArrowLeftIcon,
   Square2StackIcon,
   QuestionMarkCircleIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
+  PlusIcon,
+  ChevronDownIcon
 } from '@heroicons/react/24/outline'
 
 const tools = [
@@ -22,13 +25,24 @@ const others = [
 ]
 
 interface SidebarProps {
+  sessions: ChatSession[]
+  activeSessionId: string | null
+  onSessionSelect: (sessionId: string) => void
+  onNewSession: () => void
   onClose: () => void
 }
 
-export default function Sidebar({ onClose }: SidebarProps) {
+export default function Sidebar({ 
+  sessions, 
+  activeSessionId, 
+  onSessionSelect, 
+  onNewSession,
+  onClose 
+}: SidebarProps) {
   const { user } = useAuth()
   const [isAuthOpen, setIsAuthOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isAIChatOpen, setIsAIChatOpen] = useState(true)
 
   const handleSettingsClick = () => {
     if (user) {
@@ -56,30 +70,55 @@ export default function Sidebar({ onClose }: SidebarProps) {
 
       {/* Tools Section */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-3 mb-6">
-          <button className="w-full flex items-center justify-center gap-2 px-4 py-2 text-gray-700 bg-white hover:bg-gray-100 rounded-lg border border-gray-200">
-            + Start New
-          </button>
-        </div>
+        <div className="px-3 py-2">
+          <div className="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-600">
+            <span>Tools</span>
+          </div>
 
-        <div className="px-3 mb-6">
-          <h2 className="text-xs font-medium text-gray-500 uppercase px-3 mb-2">Tools</h2>
-          <div className="space-y-1">
-            {tools.map((tool) => (
-              <button
-                key={tool.label}
-                className={`w-full flex items-center gap-3 px-3 py-2 text-gray-700 rounded-lg ${
-                  tool.active ? 'bg-white shadow-sm' : 'hover:bg-gray-100'
-                }`}
-              >
-                <tool.icon className="h-5 w-5" />
-                <span className="text-sm">{tool.label}</span>
-              </button>
-            ))}
+          <div>
+            <button
+              onClick={() => setIsAIChatOpen(!isAIChatOpen)}
+              className="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-gray-100"
+            >
+              <div className="flex items-center space-x-2">
+                <ChatBubbleLeftIcon className="h-5 w-5" />
+                <span>AI Chat</span>
+              </div>
+              <ChevronDownIcon 
+                className={`h-4 w-4 transition-transform ${isAIChatOpen ? 'transform rotate-180' : ''}`} 
+              />
+            </button>
+
+            {isAIChatOpen && (
+              <div className="ml-4 mt-1 space-y-1">
+                <button
+                  onClick={onNewSession}
+                  className="flex items-center w-full px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg"
+                >
+                  <PlusIcon className="h-4 w-4 mr-2" />
+                  <span>Start New</span>
+                </button>
+
+                {sessions.map((session) => (
+                  <button
+                    key={session.id}
+                    onClick={() => onSessionSelect(session.id)}
+                    className={`flex items-center w-full px-3 py-2 text-sm rounded-lg ${
+                      session.id === activeSessionId
+                        ? 'bg-gray-100 text-gray-900'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`}
+                  >
+                    <ChatBubbleLeftIcon className="h-4 w-4 mr-2" />
+                    <span className="truncate">{session.title}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="px-3">
+        <div className="px-3 mb-6">
           <h2 className="text-xs font-medium text-gray-500 uppercase px-3 mb-2">Others</h2>
           <div className="space-y-1">
             {others.map((item) => (
