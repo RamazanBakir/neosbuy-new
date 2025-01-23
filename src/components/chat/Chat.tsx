@@ -123,17 +123,19 @@ export default function Chat({
 
   return (
     <div className="flex-1 overflow-hidden flex flex-col">
-      {!user && !hasReachedLimit && (
-        <div className="bg-blue-50 p-4 text-sm text-blue-700">
-          Ücretsiz deneme: {remainingQuestions} soru hakkınız kaldı. 
-          <button onClick={() => setIsAuthModalOpen(true)} className="font-medium underline hover:text-blue-800">
-            giriş yapın.
-          </button>
-        </div>
-      )}
-
       <div className="flex-1 mb-4">
         <ChatMessages messages={currentMessages} isLoading={isLoading} />
+      </div>
+
+      <div className="relative">
+        {!user && !hasReachedLimit && (
+          <div className="bg-blue-50 p-4 text-sm text-blue-700 mb-4">
+            Ücretsiz deneme: {remainingQuestions} soru hakkınız kaldı. 
+            <button onClick={() => setIsAuthModalOpen(true)} className="font-medium underline hover:text-blue-800">
+              giriş yapın.
+            </button>
+          </div>
+        )}
         <ChatInput onSubmit={handleNewMessage} />
       </div>
 
