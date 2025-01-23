@@ -8,7 +8,7 @@ import {
   ListBulletIcon,
   MagnifyingGlassIcon 
 } from '@heroicons/react/24/outline'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ImageViewer from '../common/ImageViewer'
 
 type ViewMode = 'grid' | 'list'
@@ -20,9 +20,27 @@ interface ChatMessagesProps {
 
 export default function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
   const displayedMessage = useLoadingMessages()
-  const [slideStates, setSlideStates] = useState<Record<string, number>>({})
-  const [viewModes, setViewModes] = useState<Record<string, ViewMode>>({})
+  const [slideStates, setSlideStates] = useState<Record<string, number>>(() => {
+    const saved = localStorage.getItem('slide_states')
+    return saved ? JSON.parse(saved) : {}
+  })
+  
+  const [viewModes, setViewModes] = useState<Record<string, ViewMode>>(() => {
+    const saved = localStorage.getItem('view_modes')
+    return saved ? JSON.parse(saved) : {}
+  })
+  
   const [selectedImage, setSelectedImage] = useState<{url: string; alt: string} | null>(null)
+
+  // slideStates değiştiğinde localStorage'a kaydet
+  useEffect(() => {
+    localStorage.setItem('slide_states', JSON.stringify(slideStates))
+  }, [slideStates])
+
+  // viewModes değiştiğinde localStorage'a kaydet
+  useEffect(() => {
+    localStorage.setItem('view_modes', JSON.stringify(viewModes))
+  }, [viewModes])
 
   const handleImageClick = (imageUrl: string, alt: string) => {
     setSelectedImage({ url: imageUrl, alt })

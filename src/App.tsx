@@ -16,7 +16,15 @@ export default function App() {
     return localStorage.getItem('active_session_id')
   })
 
-  const [showTools, setShowTools] = useState(true)
+  const [showTools, setShowTools] = useState(() => {
+    const savedShowTools = localStorage.getItem('show_tools')
+    if (savedShowTools === null) return true
+    return JSON.parse(savedShowTools)
+  })
+
+  useEffect(() => {
+    localStorage.setItem('show_tools', JSON.stringify(showTools))
+  }, [showTools])
 
   // Sessions değiştiğinde localStorage'a kaydet
   useEffect(() => {
