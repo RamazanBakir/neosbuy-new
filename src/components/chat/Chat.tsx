@@ -6,6 +6,7 @@ import { searchProducts } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
 import { useQuestionLimit } from '../../hooks/useQuestionLimit'
 import AuthModal from '../auth/AuthModal'
+import LimitExceededModal from '../auth/LimitExceededModal'
 
 export default function Chat() {
   const { user } = useAuth()
@@ -13,10 +14,11 @@ export default function Chat() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [isLimitExceededOpen, setIsLimitExceededOpen] = useState(false)
 
   const handleNewMessage = async (content: string) => {
     if (hasReachedLimit) {
-      setIsAuthModalOpen(true)
+      setIsLimitExceededOpen(true)
       return
     }
 
@@ -96,9 +98,18 @@ export default function Chat() {
         <ChatInput onSubmit={handleNewMessage} />
       </div>
 
+      <LimitExceededModal 
+        isOpen={isLimitExceededOpen}
+        onClose={() => setIsLimitExceededOpen(false)}
+        onLogin={() => {
+          setIsLimitExceededOpen(false)
+          setIsAuthModalOpen(true)
+        }}
+      />
+      
       <AuthModal 
-        isOpen={isAuthModalOpen} 
-        onClose={() => setIsAuthModalOpen(false)} 
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
       />
     </div>
   )
