@@ -127,12 +127,12 @@ export default function Chat({
         <ChatMessages messages={currentMessages} isLoading={isLoading} />
       </div>
 
-      <div className="relative">
+      <div className="relative max-w-4xl mx-auto w-full px-4">
         {!user && !hasReachedLimit && (
-          <div className="bg-blue-50 p-4 text-sm text-blue-700 mb-4">
+          <div className="bg-blue-50 p-4 text-sm text-blue-700 mb-4 rounded-lg">
             Ücretsiz deneme: {remainingQuestions} soru hakkınız kaldı. 
-            <button onClick={() => setIsAuthModalOpen(true)} className="font-medium underline hover:text-blue-800">
-              giriş yapın.
+            <button onClick={() => setIsAuthModalOpen(true)} className="font-medium underline hover:text-blue-800 ml-1">
+              giriş yapın
             </button>
           </div>
         )}

@@ -219,50 +219,54 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
 
   return (
     <>
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message) => (
-          <div key={message.id}>
-            {message.type === 'assistant' && message.messageType === 'products' && Array.isArray(message.content) ? (
-              renderProductList(message.content, message.id)
-            ) : (
-              <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-3xl rounded-lg px-4 py-2 ${
-                  message.type === 'user' 
-                    ? 'bg-blue-500 text-white' 
-                    : message.type === 'error'
-                      ? 'bg-red-50 text-red-500'
-                      : 'bg-gray-100 dark:bg-gray-800'
-                }`}>
-                  {typeof message.content === 'string' && <p className="text-sm">{message.content}</p>}
-                  {message.type === 'assistant' && !message.messageType && (
-                    <div className="mt-2 flex items-center space-x-2 text-xs text-gray-500">
-                      <Tooltip text="Metni Kopyala" position="bottom">
-                        <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200">
-                          <ClipboardIcon className="h-4 w-4" />
-                        </button>
-                      </Tooltip>
-                      <Tooltip text="Sesli Dinle" position="bottom">
-                        <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200">
-                          <SpeakerWaveIcon className="h-4 w-4" />
-                        </button>
-                      </Tooltip>
-                      <Tooltip text="Çeviri" position="bottom">
-                        <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200">
-                          <GlobeAltIcon className="h-4 w-4" />
-                        </button>
-                      </Tooltip>
-                    </div>
-                  )}
+      <div className="flex-1 overflow-y-auto p-4">
+        <div className="max-w-4xl mx-auto space-y-4">
+          {messages.map((message) => (
+            <div key={message.id}>
+              {message.type === 'assistant' && message.messageType === 'products' && Array.isArray(message.content) ? (
+                renderProductList(message.content, message.id)
+              ) : (
+                <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[85%] sm:max-w-[75%] md:max-w-[65%] rounded-lg px-4 py-2 ${
+                    message.type === 'user' 
+                      ? 'bg-blue-500 text-white' 
+                      : message.type === 'error'
+                        ? 'bg-red-50 text-red-500'
+                        : 'bg-gray-100 dark:bg-gray-800'
+                  }`}>
+                    {typeof message.content === 'string' && <p className="text-sm">{message.content}</p>}
+                    {message.type === 'assistant' && !message.messageType && (
+                      <div className="mt-2 flex items-center space-x-2 text-xs text-gray-500">
+                        <Tooltip text="Metni Kopyala" position="bottom">
+                          <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200">
+                            <ClipboardIcon className="h-4 w-4" />
+                          </button>
+                        </Tooltip>
+                        <Tooltip text="Sesli Dinle" position="bottom">
+                          <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200">
+                            <SpeakerWaveIcon className="h-4 w-4" />
+                          </button>
+                        </Tooltip>
+                        <Tooltip text="Çeviri" position="bottom">
+                          <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200">
+                            <GlobeAltIcon className="h-4 w-4" />
+                          </button>
+                        </Tooltip>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        ))}
+              )}
+            </div>
+          ))}
+        </div>
         
         {isLoading && (
-          <div className="flex items-center space-x-2 text-gray-500">
-            <LoadingDots />
-            <p>{typeof displayedMessage === 'string' ? displayedMessage : ''}</p>
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center space-x-2 text-gray-500 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg">
+              <LoadingDots />
+              <p className="text-sm">{displayedMessage}</p>
+            </div>
           </div>
         )}
       </div>
