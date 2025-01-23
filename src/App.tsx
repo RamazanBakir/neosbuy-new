@@ -16,6 +16,8 @@ export default function App() {
     return localStorage.getItem('active_session_id')
   })
 
+  const [showTools, setShowTools] = useState(true)
+
   // Sessions değiştiğinde localStorage'a kaydet
   useEffect(() => {
     localStorage.setItem('chat_sessions', JSON.stringify(sessions))
@@ -44,6 +46,7 @@ export default function App() {
   const handleUpdateSession = (sessionId: string, messages: ChatMessage | ChatMessage[]) => {
     setSessions(prev => prev.map(session => {
       if (session.id === sessionId) {
+        setShowTools(false)
         return {
           ...session,
           messages: [...session.messages, ...(Array.isArray(messages) ? messages : [messages])]
@@ -77,17 +80,28 @@ export default function App() {
         <Layout 
           sessions={sessions}
           activeSessionId={activeSessionId}
-          onNewSession={handleNewSession}
-          onSessionSelect={setActiveSessionId}
+          onNewSession={() => {
+            handleNewSession()
+            setShowTools(true)
+          }}
+          onSessionSelect={(id) => {
+            setActiveSessionId(id)
+            const session = sessions.find(s => s.id === id)
+            setShowTools(session?.messages.length === 0)
+          }}
           onUpdateSessionTitle={handleUpdateSessionTitle}
           onDeleteSession={handleDeleteSession}
         >
           <div className="flex flex-col h-full">
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-center mb-8">
-                How can I help you today?
-              </h1>
-              <ChatTools />
+              {showTools && (
+                <>
+                  <h1 className="text-2xl font-bold text-center mb-8">
+                    How can I help you today?
+                  </h1>
+                  <ChatTools />
+                </>
+              )}
             </div>
             <div className="pb-8">
               <Chat 
