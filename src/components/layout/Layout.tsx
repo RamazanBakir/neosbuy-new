@@ -5,23 +5,20 @@ import { ChatSession } from '../../types/chat'
 
 interface LayoutProps {
   children: ReactNode
+  sessions: ChatSession[]
+  activeSessionId: string | null
+  onNewSession: () => void
+  onSessionSelect: (sessionId: string) => void
 }
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ 
+  children, 
+  sessions, 
+  activeSessionId, 
+  onNewSession, 
+  onSessionSelect 
+}: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
-  const [sessions, setSessions] = useState<ChatSession[]>([])
-  const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
-
-  const handleNewSession = () => {
-    const newSession: ChatSession = {
-      id: Date.now().toString(),
-      title: 'Yeni Sohbet',
-      createdAt: new Date(),
-      messages: []
-    }
-    setSessions(prev => [newSession, ...prev])
-    setActiveSessionId(newSession.id)
-  }
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -39,8 +36,8 @@ export default function Layout({ children }: LayoutProps) {
           <Sidebar 
             sessions={sessions}
             activeSessionId={activeSessionId}
-            onSessionSelect={setActiveSessionId}
-            onNewSession={handleNewSession}
+            onSessionSelect={onSessionSelect}
+            onNewSession={onNewSession}
             onClose={() => setIsSidebarOpen(false)} 
           />
         </div>
