@@ -14,6 +14,7 @@ import {
 import { useState, useEffect } from 'react'
 import ImageViewer from '../common/ImageViewer'
 import Tooltip from '../common/Tooltip'
+import { useSpeech } from '../../hooks/useSpeech'
 
 const LoadingDots = () => (
   <div className="flex space-x-1">
@@ -43,6 +44,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
   })
   
   const [selectedImage, setSelectedImage] = useState<{url: string; alt: string} | null>(null)
+  const { speak, stop, isSpeaking } = useSpeech()
 
   // slideStates değiştiğinde localStorage'a kaydet
   useEffect(() => {
@@ -56,6 +58,14 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
 
   const handleImageClick = (imageUrl: string, alt: string) => {
     setSelectedImage({ url: imageUrl, alt })
+  }
+
+  const handleSpeakClick = (text: string) => {
+    if (isSpeaking) {
+      stop()
+    } else {
+      speak(text)
+    }
   }
 
   const renderProductList = (products: BaseProduct[], messageId: string) => {
@@ -242,8 +252,13 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                             <ClipboardIcon className="h-4 w-4" />
                           </button>
                         </Tooltip>
-                        <Tooltip text="Sesli Dinle" position="bottom">
-                          <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200">
+                        <Tooltip text={isSpeaking ? "Durdur" : "Sesli Dinle"} position="bottom">
+                          <button 
+                            onClick={() => typeof message.content === 'string' && handleSpeakClick(message.content)}
+                            className={`hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200 ${
+                              isSpeaking ? 'text-blue-500 dark:text-blue-400' : ''
+                            }`}
+                          >
                             <SpeakerWaveIcon className="h-4 w-4" />
                           </button>
                         </Tooltip>
