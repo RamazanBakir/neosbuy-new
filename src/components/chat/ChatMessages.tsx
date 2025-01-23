@@ -13,6 +13,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { useState, useEffect } from 'react'
 import ImageViewer from '../common/ImageViewer'
+import Tooltip from '../common/Tooltip'
 
 const LoadingDots = () => (
   <div className="flex space-x-1">
@@ -235,15 +236,21 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                   {typeof message.content === 'string' && <p className="text-sm">{message.content}</p>}
                   {message.type === 'assistant' && !message.messageType && (
                     <div className="mt-2 flex items-center space-x-2 text-xs text-gray-500">
-                      <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded">
-                        <ClipboardIcon className="h-4 w-4" />
-                      </button>
-                      <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded">
-                        <SpeakerWaveIcon className="h-4 w-4" />
-                      </button>
-                      <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded">
-                        <GlobeAltIcon className="h-4 w-4" />
-                      </button>
+                      <Tooltip text="Metni Kopyala">
+                        <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded">
+                          <ClipboardIcon className="h-4 w-4" />
+                        </button>
+                      </Tooltip>
+                      <Tooltip text="Sesli Dinle">
+                        <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded">
+                          <SpeakerWaveIcon className="h-4 w-4" />
+                        </button>
+                      </Tooltip>
+                      <Tooltip text="Çeviri">
+                        <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded">
+                          <GlobeAltIcon className="h-4 w-4" />
+                        </button>
+                      </Tooltip>
                     </div>
                   )}
                 </div>
