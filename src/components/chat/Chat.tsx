@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { ChatMessage, BaseProduct, ChatSession } from '../../types/chat'
 import ChatMessages from './ChatMessages'
 import ChatInput from './ChatInput'
@@ -72,7 +72,9 @@ export default function Chat({
       timestamp: new Date()
     }
 
-    onUpdateSession(currentSessionId, userMessage)
+    if (currentSessionId) {
+      onUpdateSession(currentSessionId, userMessage)
+    }
     setIsLoading(true)
 
     try {
@@ -81,7 +83,9 @@ export default function Chat({
       
       // Session başlığını güncelle
       const shortTitle = response.aiSummary.split(' ').slice(0, 3).join(' ')
-      onUpdateSessionTitle(currentSessionId, shortTitle)
+      if (currentSessionId) {
+        onUpdateSessionTitle(currentSessionId, shortTitle)
+      }
 
       const aiSummaryMessage: ChatMessage = {
         id: (Date.now() + 1).toString(), 
@@ -98,7 +102,9 @@ export default function Chat({
         timestamp: new Date()
       }
 
-      onUpdateSession(currentSessionId, [aiSummaryMessage, productsMessage])
+      if (currentSessionId) {
+        onUpdateSession(currentSessionId, [aiSummaryMessage, productsMessage])
+      }
     } catch (error) {
       console.error('Search error:', error)
       const errorMessage: ChatMessage = {
@@ -107,7 +113,9 @@ export default function Chat({
         content: 'Üzgünüm, arama sırasında bir hata oluştu. Lütfen tekrar deneyin.',
         timestamp: new Date()
       }
-      onUpdateSession(currentSessionId, errorMessage)
+      if (currentSessionId) {
+        onUpdateSession(currentSessionId, errorMessage)
+      }
     } finally {
       setIsLoading(false)
     }

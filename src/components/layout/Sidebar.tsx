@@ -11,8 +11,12 @@ import {
   Cog6ToothIcon,
   PlusIcon,
   ChevronDownIcon,
-  TrashIcon
+  TrashIcon,
+  PencilIcon,
+  CheckIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline'
+import ContextMenu from '../common/ContextMenu'
 
 const tools = [
   { icon: ChatBubbleLeftIcon, label: 'AI Chat', active: true },
@@ -50,6 +54,11 @@ export default function Sidebar({
   const [isAIChatOpen, setIsAIChatOpen] = useState(true)
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null)
   const [editTitle, setEditTitle] = useState('')
+  const [contextMenu, setContextMenu] = useState<{
+    x: number
+    y: number
+    sessionId: string
+  } | null>(null)
 
   const handleSettingsClick = () => {
     if (user) {
@@ -57,6 +66,11 @@ export default function Sidebar({
     } else {
       setIsAuthOpen(true)
     }
+  }
+
+  const truncateTitle = (title: string, maxLength: number = 25) => {
+    if (title.length <= maxLength) return title
+    return title.substring(0, maxLength) + '...'
   }
 
   const handleEditStart = (session: ChatSession) => {
@@ -74,6 +88,15 @@ export default function Sidebar({
   const handleEditCancel = () => {
     setEditingSessionId(null)
     setEditTitle('')
+  }
+
+  const handleContextMenu = (e: React.MouseEvent, sessionId: string) => {
+    e.preventDefault()
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      sessionId
+    })
   }
 
   return (
@@ -124,42 +147,74 @@ export default function Sidebar({
                 </button>
 
                 {sessions.map((session) => (
-                  <div key={session.id} className="group flex items-center">
+                  <div 
+                    key={session.id} 
+                    className="group flex items-center"
+                    onContextMenu={(e) => handleContextMenu(e, session.id)}
+                  >
                     {editingSessionId === session.id ? (
                       <div className="flex-1 px-3 py-2">
-                        <input
-                          type="text"
-                          value={editTitle}
-                          onChange={(e) => setEditTitle(e.target.value)}
-                          onBlur={handleEditSave}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') handleEditSave()
-                            if (e.key === 'Escape') handleEditCancel()
-                          }}
-                          className="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          autoFocus
-                        />
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={editTitle}
+                            onChange={(e) => setEditTitle(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') handleEditSave()
+                              if (e.key === 'Escape') handleEditCancel()
+                            }}
+                            maxLength={50}
+                            placeholder="Enter ile kaydedin veya ikona tıklayın"
+                            className="w-full px-2 py-1 pr-16 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            autoFocus
+                          />
+                          <div className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                            <button
+                              onClick={handleEditSave}
+                              className="p-1 text-gray-400 hover:text-green-500"
+                              title="Kaydet"
+                            >
+                              <CheckIcon className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={handleEditCancel}
+                              className="p-1 text-gray-400 hover:text-red-500"
+                              title="İptal"
+                            >
+                              <XMarkIcon className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     ) : (
                       <>
                         <button
                           onClick={() => onSessionSelect(session.id)}
-                          onDoubleClick={() => handleEditStart(session)}
-                          className={`flex-1 flex items-center px-3 py-2 text-sm rounded-lg ${
+                          className={`flex-1 flex items-center px-3 py-2 text-sm rounded-lg min-w-0 ${
                             session.id === activeSessionId
                               ? 'bg-gray-100 text-gray-900'
                               : 'text-gray-600 hover:bg-gray-100'
                           }`}
                         >
-                          <ChatBubbleLeftIcon className="h-4 w-4 mr-2" />
-                          <span className="truncate">{session.title}</span>
+                          <ChatBubbleLeftIcon className="h-4 w-4 min-w-[16px] mr-2" />
+                          <span className="truncate block max-w-[160px]">{session.title}</span>
                         </button>
-                        <button
-                          onClick={() => onDeleteSession(session.id)}
-                          className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-red-500"
-                        >
-                          <TrashIcon className="h-4 w-4" />
-                        </button>
+                        <div className="flex items-center opacity-0 group-hover:opacity-100">
+                          <button
+                            onClick={() => handleEditStart(session)}
+                            className="p-2 text-gray-400 hover:text-blue-500"
+                            title="Başlığı düzenle"
+                          >
+                            <PencilIcon className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => onDeleteSession(session.id)}
+                            className="p-2 text-gray-400 hover:text-red-500"
+                            title="Sohbeti sil"
+                          >
+                            <TrashIcon className="h-4 w-4" />
+                          </button>
+                        </div>
                       </>
                     )}
                   </div>
@@ -195,6 +250,25 @@ export default function Sidebar({
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
       />
+
+      {contextMenu && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={() => setContextMenu(null)}
+          onEdit={() => {
+            const session = sessions.find(s => s.id === contextMenu.sessionId)
+            if (session) {
+              handleEditStart(session)
+            }
+            setContextMenu(null)
+          }}
+          onDelete={() => {
+            onDeleteSession(contextMenu.sessionId)
+            setContextMenu(null)
+          }}
+        />
+      )}
     </aside>
   )
 } 
