@@ -3,12 +3,23 @@ import { ChatMessage, BaseProduct } from '../../types/chat'
 import ChatMessages from './ChatMessages'
 import ChatInput from './ChatInput'
 import { searchProducts } from '../../services/api'
+import { useAuth } from '../../context/AuthContext'
+import { useQuestionLimit } from '../../hooks/useQuestionLimit'
+import AuthModal from '../auth/AuthModal'
 
 export default function Chat() {
+  const { user } = useAuth()
+  const { hasReachedLimit, incrementCount, remainingQuestions } = useQuestionLimit()
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
 
   const handleNewMessage = async (content: string) => {
+    if (hasReachedLimit) {
+      setIsAuthModalOpen(true)
+      return
+    }
+
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       type: 'user',
@@ -20,6 +31,7 @@ export default function Chat() {
     setIsLoading(true)
 
     try {
+      incrementCount()
       const response = await searchProducts(content)
       const products = response.productSearch.data.products
 
@@ -66,11 +78,28 @@ export default function Chat() {
   }
 
   return (
-        <div className="flex flex-col">
-          <div className="flex-1 mb-4">
-          <ChatMessages messages={messages} isLoading={isLoading} />
-          <ChatInput onSubmit={handleNewMessage} />
-          </div>
+    <div className="flex-1 overflow-hidden flex flex-col">
+      {!user && !hasReachedLimit && (
+        <div className="bg-blue-50 p-4 text-sm text-blue-700">
+          Ücretsiz deneme: {remainingQuestions} soru hakkınız kaldı. 
+          Daha fazla premium kullanım için <button
+            onClick={() => setIsAuthModalOpen(true)}
+            className="font-medium underline hover:text-blue-800"
+          >
+            giriş yapın.
+          </button>
         </div>
+      )}
+
+      <div className="flex-1 mb-4">
+        <ChatMessages messages={messages} isLoading={isLoading} />
+        <ChatInput onSubmit={handleNewMessage} />
+      </div>
+
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+      />
+    </div>
   )
 } 
