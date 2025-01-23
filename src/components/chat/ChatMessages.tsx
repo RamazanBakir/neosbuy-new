@@ -20,23 +20,39 @@ interface ChatMessagesProps {
 
 export default function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
   const displayedMessage = useLoadingMessages()
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  const [slideStates, setSlideStates] = useState<Record<string, number>>({})
+  const [viewModes, setViewModes] = useState<Record<string, ViewMode>>({})
   const [selectedImage, setSelectedImage] = useState<{url: string; alt: string} | null>(null)
 
   const handleImageClick = (imageUrl: string, alt: string) => {
     setSelectedImage({ url: imageUrl, alt })
   }
 
-  const renderProductList = (products: BaseProduct[]) => {
+  const renderProductList = (products: BaseProduct[], messageId: string) => {
+    const currentSlide = slideStates[messageId] || 0
+    const viewMode = viewModes[messageId] || 'grid'
+
+    const setViewMode = (mode: ViewMode) => {
+      setViewModes(prev => ({
+        ...prev,
+        [messageId]: mode
+      }))
+    }
+
     const nextSlide = () => {
-      setCurrentSlide((prev) => (prev + 1) % Math.ceil(products.length / (viewMode === 'grid' ? 2 : 3)))
+      setSlideStates(prev => ({
+        ...prev,
+        [messageId]: (prev[messageId] + 1) % Math.ceil(products.length / (viewMode === 'grid' ? 2 : 3)) || 0
+      }))
     }
 
     const prevSlide = () => {
-      setCurrentSlide((prev) => 
-        prev === 0 ? Math.ceil(products.length / (viewMode === 'grid' ? 2 : 3)) - 1 : prev - 1
-      )
+      setSlideStates(prev => ({
+        ...prev,
+        [messageId]: prev[messageId] === 0 
+          ? Math.ceil(products.length / (viewMode === 'grid' ? 2 : 3)) - 1 
+          : prev[messageId] - 1
+      }))
     }
 
     const visibleProducts = products.slice(
@@ -189,7 +205,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
     }
 
     if (message.type === 'assistant' && Array.isArray(message.content)) {
-      return renderProductList(message.content)
+      return renderProductList(message.content as BaseProduct[], message.id)
     }
 
     return (
