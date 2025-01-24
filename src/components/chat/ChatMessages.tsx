@@ -68,6 +68,15 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
     }
   }
 
+  const handleCopyClick = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      // İsteğe bağlı: Kopyalama başarılı olduğunda bir bildirim gösterilebilir
+    } catch (err) {
+      console.error('Kopyalama hatası:', err)
+    }
+  }
+
   const renderProductList = (products: BaseProduct[], messageId: string) => {
     const currentSlide = slideStates[messageId] || 0
     const viewMode = viewModes[messageId] || 'grid'
@@ -248,14 +257,17 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                     {message.type === 'assistant' && !message.messageType && (
                       <div className="mt-2 flex items-center space-x-2 text-xs text-gray-500">
                         <Tooltip text="Metni Kopyala" position="bottom">
-                          <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200">
+                          <button 
+                            onClick={() => typeof message.content === 'string' && handleCopyClick(message.content)}
+                            className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200 active:scale-90 active:bg-gray-300 dark:active:bg-gray-600"
+                          >
                             <ClipboardIcon className="h-4 w-4" />
                           </button>
                         </Tooltip>
                         <Tooltip text={isSpeaking ? "Durdur" : "Sesli Dinle"} position="bottom">
                           <button 
                             onClick={() => typeof message.content === 'string' && handleSpeakClick(message.content)}
-                            className={`hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200 ${
+                            className={`hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200 active:scale-90 active:bg-gray-300 dark:active:bg-gray-600 ${
                               isSpeaking ? 'text-blue-500 dark:text-blue-400' : ''
                             }`}
                           >
@@ -263,7 +275,9 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                           </button>
                         </Tooltip>
                         <Tooltip text="Çeviri" position="bottom">
-                          <button className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200">
+                          <button 
+                            className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200 active:scale-90 active:bg-gray-300 dark:active:bg-gray-600"
+                          >
                             <GlobeAltIcon className="h-4 w-4" />
                           </button>
                         </Tooltip>
