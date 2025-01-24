@@ -15,6 +15,8 @@ import { useState, useEffect } from 'react'
 import ImageViewer from '../common/ImageViewer'
 import Tooltip from '../common/Tooltip'
 import { useSpeech } from '../../hooks/useSpeech'
+import LanguageMenu from '../common/LanguageMenu'
+import { useTranslation } from '../../hooks/useTranslation'
 
 const LoadingDots = () => (
   <div className="flex space-x-1">
@@ -45,6 +47,9 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
   
   const [selectedImage, setSelectedImage] = useState<{url: string; alt: string} | null>(null)
   const { speak, stop, isSpeaking } = useSpeech()
+  const [languageMenu, setLanguageMenu] = useState<{ x: number; y: number } | null>(null)
+  const { translate, isTranslating } = useTranslation()
+  const [selectedText, setSelectedText] = useState<string | null>(null)
 
   // slideStates değiştiğinde localStorage'a kaydet
   useEffect(() => {
@@ -74,6 +79,27 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
       // İsteğe bağlı: Kopyalama başarılı olduğunda bir bildirim gösterilebilir
     } catch (err) {
       console.error('Kopyalama hatası:', err)
+    }
+  }
+
+  const handleTranslateClick = (event: React.MouseEvent, content: string) => {
+    event.preventDefault()
+    setSelectedText(content)
+    const rect = event.currentTarget.getBoundingClientRect()
+    setLanguageMenu({ x: rect.left, y: rect.bottom + 5 })
+  }
+
+  const handleSelectLanguage = async (langCode: string) => {
+    if (typeof selectedText !== 'string') return
+    
+    try {
+      const translatedText = await translate(selectedText, langCode)
+      // İsteğe bağlı: Çeviriyi göstermek için bir toast veya modal kullanılabilir
+      console.log('Çeviri:', translatedText)
+    } catch (error) {
+      console.error('Çeviri hatası:', error)
+    } finally {
+      setLanguageMenu(null)
     }
   }
 
@@ -274,9 +300,12 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                             <SpeakerWaveIcon className="h-4 w-4" />
                           </button>
                         </Tooltip>
-                        <Tooltip text="Çeviri" position="bottom">
+                        <Tooltip text={isTranslating ? "Çeviriliyor..." : "Çeviri"} position="bottom">
                           <button 
-                            className="hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200 active:scale-90 active:bg-gray-300 dark:active:bg-gray-600"
+                            onClick={(e) => typeof message.content === 'string' && handleTranslateClick(e, message.content)}
+                            className={`hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200 active:scale-90 active:bg-gray-300 dark:active:bg-gray-600 ${
+                              isTranslating ? 'text-blue-500 dark:text-blue-400' : ''
+                            }`}
                           >
                             <GlobeAltIcon className="h-4 w-4" />
                           </button>
@@ -305,6 +334,16 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
           imageUrl={selectedImage.url}
           alt={selectedImage.alt}
           onClose={() => setSelectedImage(null)}
+        />
+      )}
+
+      {/* Language Menu */}
+      {languageMenu && (
+        <LanguageMenu
+          x={languageMenu.x}
+          y={languageMenu.y}
+          onClose={() => setLanguageMenu(null)}
+          onSelectLanguage={handleSelectLanguage}
         />
       )}
     </>
