@@ -37,12 +37,14 @@ export default function ChatInput({ onSubmit }: ChatInputProps) {
 
   return (
     <div className="relative max-w-3xl mx-auto">
-      <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+      <div className="relative bg-white dark:bg-[#2A2B32] rounded-lg border border-gray-200 dark:border-gray-700/50">
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyPress={handleKeyPress}
-          className="w-full px-4 py-3 pr-12 rounded-lg resize-none focus:outline-none focus:ring-0 focus:border-gray-300 dark:bg-gray-800 dark:text-gray-200"
+          className="w-full px-4 py-3 pr-12 rounded-lg resize-none focus:outline-none focus:ring-0 
+            bg-white dark:bg-[#2A2B32] text-gray-900 dark:text-gray-100 
+            placeholder-gray-500 dark:placeholder-gray-400"
           placeholder={isLoading ? "Yanıt bekleniyor..." : "Ürün aramak için bir şeyler yazın..."}
           rows={1}
           disabled={isLoading}
@@ -50,7 +52,10 @@ export default function ChatInput({ onSubmit }: ChatInputProps) {
         <button 
           onClick={handleSubmit}
           disabled={isLoading || !message.trim()}
-          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-50"
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 
+            text-gray-400 hover:text-gray-600 
+            dark:text-gray-400 dark:hover:text-gray-200 
+            disabled:opacity-50"
         >
           <PaperAirplaneIcon className="h-5 w-5" />
         </button>

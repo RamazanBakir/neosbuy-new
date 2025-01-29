@@ -122,12 +122,12 @@ export default function Chat({
   }
 
   return (
-    <div className="flex-1 overflow-hidden flex flex-col">
+    <div className="flex-1 overflow-hidden flex flex-col bg-white dark:bg-[#343541]">
       <div className="flex-1 mb-4">
         <ChatMessages messages={currentMessages} isLoading={isLoading} />
       </div>
 
-      <div className="relative max-w-4xl mx-auto w-full px-4">
+      <div className="relative max-w-4xl mx-auto w-full px-4 pb-4">
         {!user && !hasReachedLimit && (
           <div className="bg-blue-50 p-4 text-sm text-blue-700 mb-4 rounded-lg">
             Ücretsiz deneme: {remainingQuestions} soru hakkınız kaldı. 

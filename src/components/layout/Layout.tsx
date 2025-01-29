@@ -25,7 +25,7 @@ export default function Layout({
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 dark:bg-[#343541]">
       {/* Overlay */}
       {isSidebarOpen && (
         <div
@@ -55,7 +55,7 @@ export default function Layout({
           onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} 
           isSidebarOpen={isSidebarOpen}
         />
-        <main className="flex-1 overflow-auto p-4">
+        <main className="flex-1 overflow-auto bg-white dark:bg-[#343541]">
           {children}
         </main>
       </div>
