@@ -81,29 +81,39 @@ export default function Chat({
       incrementCount()
       const response = await searchProducts(content)
       
-      // Session başlığını güncelle
-      const shortTitle = response.aiSummary.split(' ').slice(0, 3).join(' ')
-      if (currentSessionId) {
-        onUpdateSessionTitle(currentSessionId, shortTitle)
-      }
-
-      const aiSummaryMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(), 
+      // AI mesajını belirle
+      const aiMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: response.aiSummary,
+        content: response.productSearch?.data?.products?.length > 0 
+          ? response.aiSummary 
+          : response.aiResponse,
         timestamp: new Date()
       }
 
-      const productsMessage: ChatMessage = {
-        id: (Date.now() + 2).toString(),
-        type: 'assistant',
-        messageType: 'products',
-        content: response.productSearch.data.products.map(mapProduct),
-        timestamp: new Date()
-      }
+      if (response.productSearch?.data?.products?.length > 0) {
+        // Ürün araması varsa başlığı güncelle ve ürünleri göster bu kısımda response'dan title olabilir.
+        const shortTitle = response.aiSummary.split(' ').slice(0, 3).join(' ')
+        if (currentSessionId) {
+          onUpdateSessionTitle(currentSessionId, shortTitle)
+        }
 
-      if (currentSessionId) {
-        onUpdateSession(currentSessionId, [aiSummaryMessage, productsMessage])
+        const productsMessage: ChatMessage = {
+          id: (Date.now() + 2).toString(),
+          type: 'assistant',
+          messageType: 'products',
+          content: response.productSearch.data.products.map(mapProduct),
+          timestamp: new Date()
+        }
+
+        if (currentSessionId) {
+          onUpdateSession(currentSessionId, [aiMessage, productsMessage])
+        }
+      } else {
+        // Sadece aiSummary varsa olur
+        if (currentSessionId) {
+          onUpdateSession(currentSessionId, aiMessage)
+        }
       }
     } catch (error) {
       console.error('Search error:', error)
