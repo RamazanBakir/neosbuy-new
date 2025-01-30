@@ -4,10 +4,13 @@ import { supabase } from "../lib/supabase"
 const API_ENDPOINTS = {
   SEARCH: 'api/search' // Gerçek endpoint'i gizliyoruz
 }
-*/}
+// TODO proxy olan geçici kapalı reel prod. deployment sonrasında düzenlenecek
 const API_BASE_URL = import.meta.env.PROD
-  ? '/api/search'  // Production URL
-  : '/api/search'  // Development URL (proxy through Vite)
+    ? '/api/search'  // Production URL
+    : '/api/search'  // Development URL (proxy through Vite)
+*/}
+// Doğrudan Supabase URL'sini kullanalım
+const API_BASE_URL = 'https://ixyuablustlfypjnjhpw.supabase.co/functions/v1/gemini-chat'
 
 const handleAuthError = async (error: any) => {
   if (error.status === 401) {
