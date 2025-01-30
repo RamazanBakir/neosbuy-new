@@ -83,8 +83,8 @@ export default function App() {
   }
 
   return (
-    <AuthProvider>
-      <ThemeProvider>
+    <ThemeProvider>
+      <AuthProvider>
         <Layout 
           sessions={sessions}
           activeSessionId={activeSessionId}
@@ -123,7 +123,7 @@ export default function App() {
             </div>
           </div>
         </Layout>
-      </ThemeProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }

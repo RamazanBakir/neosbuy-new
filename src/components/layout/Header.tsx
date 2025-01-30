@@ -11,17 +11,9 @@ interface HeaderProps {
 }
 
 export default function Header({ onMenuClick }: HeaderProps) {
-  const { theme, setTheme } = useTheme()
+  const { theme, toggleTheme } = useTheme()
   const { user, signOut } = useAuth()
   const [isAuthOpen, setIsAuthOpen] = useState(false)
-
-  const handleThemeToggle = () => {
-    if (theme === 'system') {
-      setTheme('dark')
-    } else {
-      setTheme(theme === 'light' ? 'dark' : 'light')
-    }
-  }
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 h-16">
@@ -37,15 +29,13 @@ export default function Header({ onMenuClick }: HeaderProps) {
         
         <div className="flex items-center gap-2">
           <button
-            onClick={handleThemeToggle}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+            onClick={toggleTheme}
+            className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
           >
-            {theme === 'system' ? (
-              <SunIcon className="h-5 w-5 text-gray-600 dark:text-gray-300" />
-            ) : theme === 'light' ? (
-              <MoonIcon className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+            {theme === 'dark' ? (
+              <SunIcon className="h-5 w-5" />
             ) : (
-              <SunIcon className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+              <MoonIcon className="h-5 w-5" />
             )}
           </button>
           
