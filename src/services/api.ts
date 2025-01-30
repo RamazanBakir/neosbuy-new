@@ -1,3 +1,5 @@
+import { supabase } from "../lib/supabase"
+
 {/*  
 const API_ENDPOINTS = {
   SEARCH: 'api/search' // Gerçek endpoint'i gizliyoruz
@@ -7,20 +9,37 @@ const API_BASE_URL = import.meta.env.PROD
   ? '/api/search'  // Production URL
   : '/api/search'  // Development URL (proxy through Vite)
 
-const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4eXVhYmx1c3RsZnlwam5qaHB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYzNzE5MTUsImV4cCI6MjA1MTk0NzkxNX0.fGcTpTRp4A7ivAn8CZRxDKly3acG-ofYN50dOJVDZ9A'
+const handleAuthError = async (error: any) => {
+  if (error.status === 401) {
+    // Token geçersiz veya expire olmuş
+    await supabase.auth.signOut()
+    window.location.href = '/login'
+  }
+  throw error
+}
 
 export const searchProducts = async (query: string) => {
   try {
+    const { data: { session } } = await supabase.auth.getSession()
+    const accessToken = session?.access_token
+
+    if (!accessToken) {
+      throw new Error('Unauthorized')
+    }
+
     const response = await fetch(API_BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_KEY}`
+        'Authorization': `Bearer ${accessToken}`
       },
       body: JSON.stringify({ q: query })
     })
 
     if (!response.ok) {
+      if (response.status === 401) {
+        return handleAuthError(response)
+      }
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 
