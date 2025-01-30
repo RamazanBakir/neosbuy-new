@@ -3,6 +3,10 @@
     {
       "source": "/api/search",
       "destination": "https://ixyuablustlfypjnjhpw.supabase.co/functions/v1/gemini-product-search"
+    },
+    {
+      "source": "/api/login",
+      "destination": "https://ixyuablustlfypjnjhpw.supabase.co/functions/v1/login"
     }
   ],
   "headers": [

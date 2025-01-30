@@ -70,10 +70,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(data.error || "Giriş yapılamadı");
       }
   
+      if (data.session) {
+        await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token
+        });
+  
+        setUser(data.user);
+      }
+  
       return { error: null };
     } catch (error) {
       console.error("Login Failed:", error);
-      return { error: error.message };
+      return { error: error instanceof Error ? error.message : 'Unexpected Error ' };
     }
   };
   
