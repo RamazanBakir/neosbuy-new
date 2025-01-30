@@ -55,21 +55,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const hashedPassword = hashPassword(password)
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password: hashedPassword
-      })
-      if (error) {
-        console.error('SignIn error:', error)
-        return { error: error.message }
+      const response = await fetch("https://ixyuablustlfypjnjhpw.supabase.co/functions/v1/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.error || "Giriş yapılamadı");
       }
-      return { error: null }
-    } catch (err) {
-      console.error('Unexpected error during signin:', err)
-      return { error: 'Beklenmeyen bir hata oluştu' }
+  
+      return { error: null };
+    } catch (error) {
+      console.error("Login Failed:", error);
+      return { error: error.message };
     }
-  }
+  };
+  
 
   const signOut = async () => {
     await supabase.auth.signOut()
