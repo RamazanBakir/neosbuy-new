@@ -103,7 +103,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
     }
   }
 
-  const renderProductList = (products: BaseProduct[], messageId: string) => {
+  const renderProductList = (products: Product[], messageId: string) => {
     const currentSlide = slideStates[messageId] || 0
     const viewMode = viewModes[messageId] || 'grid'
 
@@ -184,14 +184,13 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                       viewMode === 'grid' ? 'w-full h-48' : 'w-32 h-32'
                     }`}
                     onClick={() => {
-                      const imageUrl = product.image || product.photo || (product.photos?.[0]) || '';
-                      const title = product.title;
-                      handleImageClick(imageUrl, title);
+                      const imageUrl = product.product_photos?.[0] || '';
+                      handleImageClick(imageUrl, product.product_title);
                     }}
                   >
                     <img 
-                      src={product.image || product.photo || (product.photos && product.photos[0])} 
-                      alt={product.title}
+                      src={product.product_photos?.[0]} 
+                      alt={product.product_title}
                       className="w-full h-full object-contain bg-gray-50 dark:bg-gray-900"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
@@ -200,30 +199,30 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                   </div>
                   <div className={`${viewMode === 'grid' ? 'mt-4' : ''} flex-1`}>
                     <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">
-                      {product.title}
+                      {product.product_title}
                     </h3>
                     <div className="mt-2 flex items-center justify-between">
                       <p className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        {typeof product.price === 'number' ? `${product.price} TL` : product.price}
+                        {product.offer?.price || 'Fiyat bilgisi yok'}
                       </p>
-                      {product.rating && (
+                      {product.product_rating && (
                         <div className="flex items-center">
                           <StarIcon className="h-5 w-5 text-yellow-400" />
                           <span className="ml-1 text-sm text-gray-600 dark:text-gray-300">
-                            {product.rating}
+                            {product.product_rating}
                           </span>
                         </div>
                       )}
                     </div>
                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                      {product.store || product.store_name}
+                      {product.offer?.store_name || 'Mağaza bilgisi yok'}
                     </p>
                   </div>
                 </div>
               ))}
             </div>
             
-            {products.length > 2 && (
+            {products.length > (viewMode === 'grid' ? 2 : 3) && (
               <>
                 <button
                   onClick={prevSlide}

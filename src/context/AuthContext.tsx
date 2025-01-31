@@ -1,11 +1,10 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { User, Session } from '@supabase/supabase-js'
+import { User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
 import { SHA256 } from 'crypto-js'
 
 interface AuthContextType {
   user: User | null
-  session: Session | null
   loading: boolean
   signUp: (email: string, password: string) => Promise<{ error: string | null }>
   signIn: (email: string, password: string) => Promise<{ error: string | null }>
@@ -17,35 +16,16 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [session, setSession] = useState<Session | null>(() => {
-    // İlk yüklemede localStorage'dan session'ı al
-    const savedSession = localStorage.getItem('supabase_session')
-    return savedSession ? JSON.parse(savedSession) : null
-  })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // İlk yüklemede session kontrolü
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setSession(session)
-        setUser(session.user)
-        localStorage.setItem('supabase_session', JSON.stringify(session))
-      }
+      setUser(session?.user ?? null)
       setLoading(false)
     })
 
-    // Auth state değişikliklerini dinle
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session) {
-        setSession(session)
-        setUser(session.user)
-        localStorage.setItem('supabase_session', JSON.stringify(session))
-      } else {
-        setSession(null)
-        setUser(null)
-        localStorage.removeItem('supabase_session')
-      }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
     })
 
     return () => subscription.unsubscribe()
@@ -95,10 +75,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           access_token: data.session.access_token,
           refresh_token: data.session.refresh_token
         });
-        
-        setSession(data.session)
-        setUser(data.user)
-        localStorage.setItem('supabase_session', JSON.stringify(data.session))
+
+        setUser(data.user);
       }
   
       return { error: null };
@@ -136,7 +114,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const value = {
     user,
-    session,
     loading,
     signUp,
     signIn,
