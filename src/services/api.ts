@@ -24,31 +24,50 @@ const handleAuthError = async (error: any) => {
 export const searchProducts = async (query: string) => {
   try {
     const { data: { session } } = await supabase.auth.getSession()
-    const accessToken = session?.access_token
-
-    if (!accessToken) {
-      throw new Error('Unauthorized')
-    }
-
-    const response = await fetch(API_BASE_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      },
-      body: JSON.stringify({ q: query })
-    })
-
-    if (!response.ok) {
-      if (response.status === 401) {
-        return handleAuthError(response)
+    
+    if (!session?.access_token) {
+      // Session yoksa önce localStorage'dan kontrol et
+      const savedSession = localStorage.getItem('supabase_session')
+      if (savedSession) {
+        const parsedSession = JSON.parse(savedSession)
+        // Session'ı yenile
+        const { data: { session: refreshedSession } } = 
+          await supabase.auth.setSession({
+            access_token: parsedSession.access_token,
+            refresh_token: parsedSession.refresh_token
+          })
+        
+        if (refreshedSession) {
+          localStorage.setItem('supabase_session', JSON.stringify(refreshedSession))
+          return makeApiCall(query, refreshedSession.access_token)
+        }
       }
-      throw new Error(`HTTP error! status: ${response.status}`)
+      throw new Error('No active session')
     }
 
-    return await response.json()
+    return makeApiCall(query, session.access_token)
   } catch (error) {
     console.error('Search error:', error)
     throw error
   }
+}
+
+const makeApiCall = async (query: string, accessToken: string) => {
+  const response = await fetch(API_BASE_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    },
+    body: JSON.stringify({ q: query })
+  })
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      return handleAuthError(response)
+    }
+    throw new Error(`HTTP error! status: ${response.status}`)
+  }
+
+  return await response.json()
 } 
