@@ -11,12 +11,17 @@ if (!supabaseAnonKey) {
   throw new Error('Missing VITE_SUPABASE_ANON_KEY environment variable')
 }
 
+const redirectURL = import.meta.env.MODE === 'production' 
+  ? 'https://neosbuy-new.vercel.app'
+  : 'http://localhost:5173' //or whatever port you are using
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
     storage: window.localStorage,
     autoRefreshToken: true,
     detectSessionInUrl: true,
+    flowType: 'pkce'
   }
 })
 
@@ -27,3 +32,19 @@ supabase.auth.onAuthStateChange((event, _session) => {
     console.log('User signed out')
   }
 })
+
+// Export the redirect URL and sign-in function for use in auth components
+export const getRedirectURL = () => redirectURL
+
+export const signInWithGoogle = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: redirectURL
+    }
+  })
+  if (error) {
+    console.error('Error signing in with Google:', error)
+    throw error
+  }
+}
