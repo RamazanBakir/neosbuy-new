@@ -9,8 +9,8 @@
       "destination": "https://ixyuablustlfypjnjhpw.supabase.co/functions/v1/login"
     },
     {
-      "source": "/auth/*",
-      "destination": "https://ixyuablustlfypjnjhpw.supabase.co/auth/*"
+      "source": "/auth/:path*",
+      "destination": "https://ixyuablustlfypjnjhpw.supabase.co/auth/:path*"
     }
   ],
   "headers": [
