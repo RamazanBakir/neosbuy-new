@@ -25,13 +25,11 @@
     }
   ],
   "env": {
-    "VITE_SUPABASE_URL": "https://ixyuablustlfypjnjhpw.supabase.co",
-    "VITE_SUPABASE_ANON_KEY": "@supabase_anon_key"
+    "VITE_SUPABASE_URL": "https://ixyuablustlfypjnjhpw.supabase.co"
   },
   "build": {
     "env": {
-      "VITE_SUPABASE_URL": "https://ixyuablustlfypjnjhpw.supabase.co",
-      "VITE_SUPABASE_ANON_KEY": "@supabase_anon_key"
+      "VITE_SUPABASE_URL": "https://ixyuablustlfypjnjhpw.supabase.co"
     }
   }
 }
