@@ -12,7 +12,7 @@ if (!supabaseAnonKey) {
 }
 
 const redirectURL = import.meta.env.MODE === 'production' 
-  ? 'https://neosbuy-new.vercel.app'
+  ? 'https://ixyuablustlfypjnjhpw.supabase.co/auth/v1/callback'
   : 'http://localhost:5173' //or whatever port you are using
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
