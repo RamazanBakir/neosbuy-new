@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useMemo } from 'react'
 import { User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
 import { SHA256 } from 'crypto-js'
@@ -55,37 +55,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const response = await fetch("https://ixyuablustlfypjnjhpw.supabase.co/functions/v1/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({ email, password }),
-      });
-  
-      const data = await response.json();
-  
-      if (!response.ok) {
-        throw new Error(data.error || "Giriş yapılamadı");
-      }
-  
-      if (data.session) {
-        await supabase.auth.setSession({
-          access_token: data.session.access_token,
-          refresh_token: data.session.refresh_token
-        });
+      const hashedPassword = hashPassword(password)
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password: hashedPassword
+      })
 
-        setUser(data.user);
+      if (error) {
+        console.error('SignIn error:', error)
+        return { error: error.message }
       }
-  
-      return { error: null };
-    } catch (error) {
-      console.error("Login Failed:", error);
-      return { error: error instanceof Error ? error.message : 'Unexpected Error ' };
+      
+      return { error: null }
+    } catch (err) {
+      console.error('Unexpected error during signin:', err)
+      return { error: 'Beklenmeyen bir hata oluştu' }
     }
-  };
-  
+  }
 
   const signOut = async () => {
     await supabase.auth.signOut()
@@ -96,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin
+          redirectTo: `${window.location.origin}/auth/callback`
         }
       })
       
@@ -111,15 +97,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { error: 'Beklenmeyen bir hata oluştu' }
     }
   }
+  
+  
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     loading,
     signUp,
     signIn,
     signOut,
     signInWithGoogle
-  }
+  }), [user, loading]) // eslint-disable-line react-hooks/exhaustive-deps için bunların belirtilmesi gerekiyor
 
   return (
     <AuthContext.Provider value={value}>

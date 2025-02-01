@@ -1,3 +1,4 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import ChatTools from './components/chat/ChatTools'
 import Chat from './components/chat/Chat'
@@ -5,6 +6,7 @@ import { ThemeProvider } from './context/ThemeContext'
 import { AuthProvider } from './context/AuthContext'
 import { useState, useEffect } from 'react'
 import { ChatMessage, ChatSession } from './types/chat'
+import AuthCallback from './components/auth/AuthCallback'
 
 export default function App() {
   const [sessions, setSessions] = useState<ChatSession[]>(() => {
@@ -83,47 +85,57 @@ export default function App() {
   }
 
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <Layout 
-          sessions={sessions}
-          activeSessionId={activeSessionId}
-          onNewSession={() => {
-            handleNewSession()
-            setShowTools(true)
-          }}
-          onSessionSelect={(id) => {
-            setActiveSessionId(id)
-            const session = sessions.find(s => s.id === id)
-            setShowTools(session?.messages.length === 0)
-          }}
-          onUpdateSessionTitle={handleUpdateSessionTitle}
-          onDeleteSession={handleDeleteSession}
-        >
-          <div className="flex flex-col h-full">
-            <div className="flex-1">
-              {showTools && (
-                <>
-                  <h1 className="text-2xl font-bold text-center mb-8">
-                    How can I help you today?
-                  </h1>
-                  <ChatTools />
-                </>
-              )}
-            </div>
-            <div className="pb-8">
-              <Chat 
-                sessions={sessions}
-                activeSessionId={activeSessionId}
-                onUpdateSession={handleUpdateSession}
-                onUpdateSessionTitle={handleUpdateSessionTitle}
-                setSessions={setSessions}
-                setActiveSessionId={setActiveSessionId}
-              />
-            </div>
-          </div>
-        </Layout>
-      </AuthProvider>
-    </ThemeProvider>
+    <Router>
+      <ThemeProvider>
+        <AuthProvider>
+          <Routes>
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route
+              path="/"
+              element={
+                <Layout 
+                  sessions={sessions}
+                  activeSessionId={activeSessionId}
+                  onNewSession={() => {
+                    handleNewSession()
+                    setShowTools(true)
+                  }}
+                  onSessionSelect={(id) => {
+                    setActiveSessionId(id)
+                    const session = sessions.find(s => s.id === id)
+                    setShowTools(session?.messages.length === 0)
+                  }}
+                  onUpdateSessionTitle={handleUpdateSessionTitle}
+                  onDeleteSession={handleDeleteSession}
+                >
+                  <div className="flex flex-col h-full">
+                    <div className="flex-1">
+                      {showTools && (
+                        <>
+                          <h1 className="text-2xl font-bold text-center mb-8">
+                            How can I help you today?
+                          </h1>
+                          <ChatTools />
+                        </>
+                      )}
+                    </div>
+                    <div className="pb-8">
+                      <Chat 
+                        sessions={sessions}
+                        activeSessionId={activeSessionId}
+                        onUpdateSession={handleUpdateSession}
+                        onUpdateSessionTitle={handleUpdateSessionTitle}
+                        setSessions={setSessions}
+                        setActiveSessionId={setActiveSessionId}
+                      />
+                    </div>
+                  </div>
+                </Layout>
+              }
+            />
+          </Routes>
+        </AuthProvider>
+      </ThemeProvider>
+    </Router>
   )
 }

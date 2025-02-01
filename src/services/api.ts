@@ -48,7 +48,7 @@ export const searchProducts = async (query: string) => {
 
     return await response.json()
   } catch (error) {
-    console.error('Search error:', error)
+    console.error('Search[API] error:', error)
     throw error
   }
 } 
