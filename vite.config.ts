@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
@@ -23,6 +23,19 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true
+    sourcemap: true,
+    rollupOptions: {
+      // This helps with code splitting and optimization
+      output: {
+        manualChunks: {
+          'supabase': ['@supabase/supabase-js'],
+          'react-vendor': ['react', 'react-dom'],
+        }
+      }
+    }
+  },
+  define: {
+    // Ensure environment variables are properly replaced
+    'process.env': process.env
   }
 })
