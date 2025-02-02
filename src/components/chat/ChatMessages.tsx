@@ -137,30 +137,30 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
 
     return (
       <div className="w-full">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow dark:shadow-gray-800/30 p-4">
+          <div className="flex items-center gap-2 mb-4">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-2 rounded-lg transition-colors ${
+                viewMode === 'grid'
+                  ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                  : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+              }`}
+            >
+              <ViewColumnsIcon className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-lg transition-colors ${
+                viewMode === 'list'
+                  ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                  : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+              }`}
+            >
+              <ListBulletIcon className="h-5 w-5" />
+            </button>
+          </div>
           <div className="flex justify-between items-center mb-4">
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg transition-colors ${
-                  viewMode === 'grid' 
-                    ? 'bg-gray-100 dark:bg-gray-700' 
-                    : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                }`}
-              >
-                <ViewColumnsIcon className="h-5 w-5" />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg transition-colors ${
-                  viewMode === 'list' 
-                    ? 'bg-gray-100 dark:bg-gray-700' 
-                    : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                }`}
-              >
-                <ListBulletIcon className="h-5 w-5" />
-              </button>
-            </div>
             <span className="text-sm text-gray-500">
               {currentSlide * (viewMode === 'grid' ? 2 : 3) + 1}-
               {Math.min((currentSlide * (viewMode === 'grid' ? 2 : 3)) + (viewMode === 'grid' ? 2 : 3), products.length)} / {products.length}
@@ -227,13 +227,13 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
               <>
                 <button
                   onClick={prevSlide}
-                  className="absolute -left-4 top-1/2 -translate-y-1/2 bg-white/90 dark:bg-gray-800/90 p-2 rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-700 transition-colors"
+                  className="absolute -left-4 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 p-2 rounded-full shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 transition-colors"
                 >
                   <ChevronLeftIcon className="h-6 w-6" />
                 </button>
                 <button
                   onClick={nextSlide}
-                  className="absolute -right-4 top-1/2 -translate-y-1/2 bg-white/90 dark:bg-gray-800/90 p-2 rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-700 transition-colors"
+                  className="absolute -right-4 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 p-2 rounded-full shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 transition-colors"
                 >
                   <ChevronRightIcon className="h-6 w-6" />
                 </button>
@@ -246,13 +246,13 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
               Başka bir ürün kategorisi aramak ister misiniz?
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
-              <button className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors">
+              <button className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors text-gray-700 dark:text-gray-200">
                 Benzer Ürünler
               </button>
-              <button className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors">
+              <button className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors text-gray-700 dark:text-gray-200">
                 İndirimli Ürünler
               </button>
-              <button className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors">
+              <button className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors text-gray-700 dark:text-gray-200">
                 En Çok Satanlar
               </button> 
             </div>
