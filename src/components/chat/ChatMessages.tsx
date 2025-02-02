@@ -17,6 +17,7 @@ import Tooltip from '../common/Tooltip'
 import { useSpeech } from '../../hooks/useSpeech'
 import LanguageMenu from '../common/LanguageMenu'
 import { useTranslation } from '../../hooks/useTranslation'
+import ProductDetailModal from '../common/ProductDetailModal'
 
 const LoadingDots = () => (
   <div className="flex space-x-1">
@@ -51,6 +52,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
   const { translate, isTranslating } = useTranslation()
   const [selectedText, setSelectedText] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [selectedProduct, setSelectedProduct] = useState<BaseProduct | null>(null)
 
   // slideStates değiştiğinde localStorage'a kaydet
   useEffect(() => {
@@ -111,7 +113,12 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
     }
   }
 
+  const handleProductClick = (product: BaseProduct) => {
+    setSelectedProduct(product)
+  }
+
   const renderProductList = (products: BaseProduct[], messageId: string) => {
+    console.log("productlar",products)
     const currentSlide = slideStates[messageId] || 0
     const viewMode = viewModes[messageId] || 'grid'
 
@@ -188,17 +195,13 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                     : 'flex flex-row space-x-4 w-full'
                 }`}>
                   <div 
+                    onClick={() => handleProductClick(product)}
                     className={`relative overflow-hidden rounded-lg group cursor-pointer ${
                       viewMode === 'grid' ? 'w-full h-48' : 'w-32 h-32'
                     }`}
-                    onClick={() => {
-                      const imageUrl = product.image || product.photo || (product.photos?.[0]) || '';
-                      const title = product.title;
-                      handleImageClick(imageUrl, title);
-                    }}
                   >
                     <img 
-                      src={product.image || product.photo || (product.photos && product.photos[0])}
+                      src={product.image || product.photo || (product.photos?.[0]) || ''}
                       alt={product.title}
                       className="w-full h-full object-contain bg-gray-50 dark:bg-gray-900"
                     />
@@ -356,6 +359,12 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
           onSelectLanguage={handleSelectLanguage}
         />
       )}
+
+      <ProductDetailModal
+        product={selectedProduct}
+        isOpen={!!selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+      />
     </>
   )
 } 
