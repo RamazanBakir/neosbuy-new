@@ -4,6 +4,8 @@ import { StarIcon } from '@heroicons/react/24/solid'
 import { 
   ChevronLeftIcon, 
   ChevronRightIcon,
+  ChevronUpIcon,
+  ChevronDownIcon,
   ViewColumnsIcon,
   ListBulletIcon,
   MagnifyingGlassIcon,
@@ -118,11 +120,12 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
   }
 
   const renderProductList = (products: BaseProduct[], messageId: string) => {
-    console.log("productlar",products)
     const currentSlide = slideStates[messageId] || 0
     const viewMode = viewModes[messageId] || 'grid'
+    const itemsPerPage = viewMode === 'grid' ? 2 : 3
 
     const setViewMode = (mode: ViewMode) => {
+      setSlideStates(prev => ({ ...prev, [messageId]: 0 })) // Reset slide position when changing view mode
       setViewModes(prev => ({
         ...prev,
         [messageId]: mode
@@ -132,7 +135,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
     const nextSlide = () => {
       setSlideStates(prev => ({
         ...prev,
-        [messageId]: (prev[messageId] + 1) % Math.ceil(products.length / (viewMode === 'grid' ? 2 : 3)) || 0
+        [messageId]: (prev[messageId] + 1) % Math.ceil(products.length / itemsPerPage) || 0
       }))
     }
 
@@ -140,14 +143,14 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
       setSlideStates(prev => ({
         ...prev,
         [messageId]: prev[messageId] === 0 
-          ? Math.ceil(products.length / (viewMode === 'grid' ? 2 : 3)) - 1 
+          ? Math.ceil(products.length / itemsPerPage) - 1 
           : prev[messageId] - 1
       }))
     }
 
     const visibleProducts = products.slice(
-      currentSlide * (viewMode === 'grid' ? 2 : 3), 
-      currentSlide * (viewMode === 'grid' ? 2 : 3) + (viewMode === 'grid' ? 2 : 3)
+      currentSlide * itemsPerPage, 
+      currentSlide * itemsPerPage + itemsPerPage
     )
 
     return (
@@ -175,19 +178,29 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
               <ListBulletIcon className="h-5 w-5" />
             </button>
           </div>
+
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm text-gray-500">
-              {currentSlide * (viewMode === 'grid' ? 2 : 3) + 1}-
-              {Math.min((currentSlide * (viewMode === 'grid' ? 2 : 3)) + (viewMode === 'grid' ? 2 : 3), products.length)} / {products.length}
+              {currentSlide * itemsPerPage + 1}-
+              {Math.min((currentSlide * itemsPerPage) + itemsPerPage, products.length)} / {products.length}
             </span>
           </div>
 
           <div className="relative min-h-[400px] w-full">
+            {products.length > itemsPerPage && viewMode === 'list' && (
+              <button
+                onClick={prevSlide}
+                className="absolute left-1/2 -translate-x-1/2 -translate-y-8 bg-white dark:bg-gray-800 p-2 rounded-full shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 transition-colors z-10"
+              >
+                <ChevronUpIcon className="h-6 w-6" />
+              </button>
+            )}
+
             <div className={`${
               viewMode === 'grid' 
                 ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' 
                 : 'flex flex-col space-y-4'
-            } w-full`}>
+            } w-full relative`}>
               {visibleProducts.map((product, index) => (
                 <div key={index} className={`${
                   viewMode === 'grid' 
@@ -234,20 +247,31 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
               ))}
             </div>
             
-            {products.length > (viewMode === 'grid' ? 2 : 3) && (
+            {products.length > itemsPerPage && (
               <>
-                <button
-                  onClick={prevSlide}
-                  className="absolute -left-4 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 p-2 rounded-full shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 transition-colors"
-                >
-                  <ChevronLeftIcon className="h-6 w-6" />
-                </button>
-                <button
-                  onClick={nextSlide}
-                  className="absolute -right-4 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 p-2 rounded-full shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 transition-colors"
-                >
-                  <ChevronRightIcon className="h-6 w-6" />
-                </button>
+                {viewMode === 'grid' ? (
+                  <>
+                    <button
+                      onClick={prevSlide}
+                      className="absolute -left-4 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 p-2 rounded-full shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 transition-colors z-10"
+                    >
+                      <ChevronLeftIcon className="h-6 w-6" />
+                    </button>
+                    <button
+                      onClick={nextSlide}
+                      className="absolute -right-4 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 p-2 rounded-full shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 transition-colors z-10"
+                    >
+                      <ChevronRightIcon className="h-6 w-6" />
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={nextSlide}
+                    className="absolute left-1/2 -translate-x-1/2 translate-y-2 bottom-0 bg-white dark:bg-gray-800 p-2 rounded-full shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 transition-colors z-10"
+                  >
+                    <ChevronDownIcon className="h-6 w-6" />
+                  </button>
+                )}
               </>
             )}
           </div>
