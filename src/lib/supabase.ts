@@ -12,8 +12,8 @@ if (!supabaseAnonKey) {
 }
 
 const redirectURL = import.meta.env.MODE === 'production' 
-  ? 'https://ixyuablustlfypjnjhpw.supabase.co/auth/v1/callback'
-  : 'http://localhost:5173' //or whatever port you are using
+  ? 'https://neosbuy.app/auth/callback'
+  : 'http://localhost:5173'
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -21,7 +21,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     storage: window.localStorage,
     autoRefreshToken: true,
     detectSessionInUrl: true,
-    flowType: 'pkce'
+    flowType: 'pkce',
+    debug: true
   }
 })
 
