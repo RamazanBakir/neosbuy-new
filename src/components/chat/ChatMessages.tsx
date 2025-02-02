@@ -103,7 +103,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
     }
   }
 
-  const renderProductList = (products: Product[], messageId: string) => {
+  const renderProductList = (products: BaseProduct[], messageId: string) => {
     const currentSlide = slideStates[messageId] || 0
     const viewMode = viewModes[messageId] || 'grid'
 
@@ -136,7 +136,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
     )
 
     return (
-      <div className="w-full max-w-2xl mx-auto">
+      <div className="w-full">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
           <div className="flex justify-between items-center mb-4">
             <div className="flex space-x-2">
@@ -172,7 +172,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
               viewMode === 'grid' 
                 ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' 
                 : 'flex flex-col space-y-4'
-            } w-full max-w-2xl mx-auto`}>
+            } w-full`}>
               {visibleProducts.map((product, index) => (
                 <div key={index} className={`${
                   viewMode === 'grid' 
@@ -184,13 +184,14 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                       viewMode === 'grid' ? 'w-full h-48' : 'w-32 h-32'
                     }`}
                     onClick={() => {
-                      const imageUrl = product.product_photos?.[0] || '';
-                      handleImageClick(imageUrl, product.product_title);
+                      const imageUrl = product.image || product.photo || (product.photos?.[0]) || '';
+                      const title = product.title;
+                      handleImageClick(imageUrl, title);
                     }}
                   >
                     <img 
-                      src={product.product_photos?.[0]} 
-                      alt={product.product_title}
+                      src={product.image || product.photo || (product.photos && product.photos[0])}
+                      alt={product.title}
                       className="w-full h-full object-contain bg-gray-50 dark:bg-gray-900"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
@@ -199,23 +200,23 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                   </div>
                   <div className={`${viewMode === 'grid' ? 'mt-4' : ''} flex-1`}>
                     <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">
-                      {product.product_title}
+                      {product.title}
                     </h3>
                     <div className="mt-2 flex items-center justify-between">
                       <p className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        {product.offer?.price || 'Fiyat bilgisi yok'}
+                        {typeof product.price === 'number' ? `${product.price} TL` : product.price}
                       </p>
-                      {product.product_rating && (
+                      {product.rating && (
                         <div className="flex items-center">
                           <StarIcon className="h-5 w-5 text-yellow-400" />
                           <span className="ml-1 text-sm text-gray-600 dark:text-gray-300">
-                            {product.product_rating}
+                            {product.rating}
                           </span>
                         </div>
                       )}
                     </div>
                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                      {product.offer?.store_name || 'Mağaza bilgisi yok'}
+                      {product.store || product.store_name}
                     </p>
                   </div>
                 </div>
@@ -266,10 +267,11 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
       <div className="flex-1 overflow-y-auto bg-white dark:bg-[#343541]">
         <div className="max-w-4xl mx-auto space-y-4 p-4">
           {messages.map((message) => (
-            <div key={message.id} className={`w-full ${
-              message.type === 'assistant' ? 'dark:bg-[#444654] py-4' : ''
-            }`}>
-              <div className="max-w-4xl mx-auto px-4">
+            <div key={message.id}>
+              {message.type === 'assistant' && message.messageType === 'products' && Array.isArray(message.content) ? (
+                renderProductList(message.content, message.id)
+              ) : (
+
                 <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[85%] sm:max-w-[75%] md:max-w-[65%] rounded-lg px-4 py-2 ${
                     message.type === 'user' 
@@ -313,7 +315,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                     )}
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           ))}
         </div>
