@@ -11,7 +11,7 @@ import {
   SpeakerWaveIcon,
   GlobeAltIcon
 } from '@heroicons/react/24/outline'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import ImageViewer from '../common/ImageViewer'
 import Tooltip from '../common/Tooltip'
 import { useSpeech } from '../../hooks/useSpeech'
@@ -50,6 +50,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
   const [languageMenu, setLanguageMenu] = useState<{ x: number; y: number } | null>(null)
   const { translate, isTranslating } = useTranslation()
   const [selectedText, setSelectedText] = useState<string | null>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // slideStates değiştiğinde localStorage'a kaydet
   useEffect(() => {
@@ -60,6 +61,13 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
   useEffect(() => {
     localStorage.setItem('view_modes', JSON.stringify(viewModes))
   }, [viewModes])
+
+  useEffect(() => {
+    const scrollToBottom = () => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
+    scrollToBottom()
+  }, [messages, isLoading])
 
   const handleImageClick = (imageUrl: string, alt: string) => {
     setSelectedImage({ url: imageUrl, alt })
@@ -318,6 +326,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
               )}
             </div>
           ))}
+          <div ref={messagesEndRef} />
         </div>
         
         {isLoading && (
