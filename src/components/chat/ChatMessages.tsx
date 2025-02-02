@@ -55,6 +55,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
   const [selectedText, setSelectedText] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [selectedProduct, setSelectedProduct] = useState<BaseProduct | null>(null)
+  const [isSliding, setIsSliding] = useState(false)
 
   // slideStates değiştiğinde localStorage'a kaydet
   useEffect(() => {
@@ -133,19 +134,33 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
     }
 
     const nextSlide = () => {
+      if (isSliding) return
+      
+      setIsSliding(true)
+      const totalSlides = Math.ceil(products.length / itemsPerPage)
       setSlideStates(prev => ({
         ...prev,
-        [messageId]: (prev[messageId] + 1) % Math.ceil(products.length / itemsPerPage) || 0
+        [messageId]: prev[messageId] === totalSlides - 1 ? 0 : (prev[messageId] || 0) + 1
       }))
+      
+      setTimeout(() => {
+        setIsSliding(false)
+      }, 300)
     }
 
     const prevSlide = () => {
+      if (isSliding) return
+      
+      setIsSliding(true)
+      const totalSlides = Math.ceil(products.length / itemsPerPage)
       setSlideStates(prev => ({
         ...prev,
-        [messageId]: prev[messageId] === 0 
-          ? Math.ceil(products.length / itemsPerPage) - 1 
-          : prev[messageId] - 1
+        [messageId]: prev[messageId] === 0 ? totalSlides - 1 : (prev[messageId] || 0) - 1
       }))
+      
+      setTimeout(() => {
+        setIsSliding(false)
+      }, 300)
     }
 
     const visibleProducts = products.slice(
