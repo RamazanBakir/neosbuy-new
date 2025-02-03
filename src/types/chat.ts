@@ -11,6 +11,14 @@ export interface BaseProduct {
   rating?: number
   store?: string
   store_name?: string
+  product_page_url?: string
+  offer?: {
+    offer_page_url?: string
+    store_name?: string
+    price?: number | string
+    shipping?: string
+    product_condition?: string
+  }
 }
 
 export interface ChatMessage {

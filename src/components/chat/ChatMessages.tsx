@@ -117,6 +117,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
   }
 
   const handleProductClick = (product: BaseProduct) => {
+    console.log("product click",product)
     setSelectedProduct(product)
   }
 
