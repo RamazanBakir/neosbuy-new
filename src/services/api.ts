@@ -21,7 +21,7 @@ const handleAuthError = async (error: any) => {
   throw error
 }
 
-export const searchProducts = async (query: string) => {
+export const searchProducts = async (query: string, sessionId?: string | null) => {
   try {
     const { data: { session } } = await supabase.auth.getSession()
     const accessToken = session?.access_token
@@ -30,13 +30,18 @@ export const searchProducts = async (query: string) => {
       throw new Error('Unauthorized')
     }
 
+    const body: any = { q: query }
+    if (sessionId) {
+      body.sessionId = sessionId
+    }
+
     const response = await fetch(API_BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`
       },
-      body: JSON.stringify({ q: query })
+      body: JSON.stringify(body)
     })
 
     if (!response.ok) {

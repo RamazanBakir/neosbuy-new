@@ -47,7 +47,8 @@ export default function App() {
       id: Date.now().toString(),
       title: 'Yeni Sohbet',
       createdAt: new Date(),
-      messages: []
+      messages: [],
+      sessionId: null
     }
     setSessions(prev => [newSession, ...prev])
     setActiveSessionId(newSession.id)

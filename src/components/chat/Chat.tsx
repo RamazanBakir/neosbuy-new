@@ -25,11 +25,12 @@ export default function Chat({
   setSessions,
   setActiveSessionId 
 }: ChatProps) {
-  const { user } = useAuth()
+  const { user, fetchSessionHistory } = useAuth()
   const { hasReachedLimit, incrementCount, remainingQuestions } = useQuestionLimit()
   const [isLoading, setIsLoading] = useState(false)
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [isLimitExceededOpen, setIsLimitExceededOpen] = useState(false)
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
 
   // Get current session's messages
   const currentSession = sessions.find(s => s.id === activeSessionId)
@@ -58,10 +59,12 @@ export default function Chat({
         id: Date.now().toString(),
         title: 'Yeni Sohbet',
         createdAt: new Date(),
-        messages: []
+        messages: [],
+        sessionId: null
       }
       setSessions(prev => [newSession, ...prev])
       setActiveSessionId(newSession.id)
+      setCurrentSessionId(null)
       currentSessionId = newSession.id
     }
 
@@ -79,9 +82,26 @@ export default function Chat({
 
     try {
       incrementCount()
-      const response = await searchProducts(content)
+      const response = await searchProducts(content, currentSessionId)
+      console.log('Search response:', response)
       
-      // AI mesajını belirle
+      if (response.sessionId) {
+        setCurrentSessionId(response.sessionId)
+        console.log('Fetching history for new session:', response.sessionId)
+        
+        setSessions(prev => prev.map(session => {
+          if (session.id === currentSessionId) {
+            return { 
+              ...session, 
+              sessionId: response.sessionId,
+              title: `Sohbet #${response.sessionId.slice(0, 8)}`,
+              messages: session.messages
+            }
+          }
+          return session
+        }))
+      }
+      
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
@@ -92,12 +112,6 @@ export default function Chat({
       }
 
       if (response.productSearch?.data?.products?.length > 0) {
-        // Ürün araması varsa başlığı güncelle ve ürünleri göster bu kısımda response'dan title olabilir.
-        const shortTitle = response.aiSummary.split(' ').slice(0, 3).join(' ')
-        if (currentSessionId) {
-          onUpdateSessionTitle(currentSessionId, shortTitle)
-        }
-
         const productsMessage: ChatMessage = {
           id: (Date.now() + 2).toString(),
           type: 'assistant',
@@ -110,7 +124,6 @@ export default function Chat({
           onUpdateSession(currentSessionId, [aiMessage, productsMessage])
         }
       } else {
-        // Sadece aiSummary varsa olur
         if (currentSessionId) {
           onUpdateSession(currentSessionId, aiMessage)
         }
