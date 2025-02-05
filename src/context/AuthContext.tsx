@@ -40,6 +40,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Auth state değiştiğinde de çek
         await fetchUserSessions(session.user.id)
       }
+      if (session?.access_token) {
+        localStorage.setItem('access_token', session.access_token)
+      } else {
+        localStorage.removeItem('access_token')
+      }
     })
 
     return () => subscription.unsubscribe()
@@ -179,16 +184,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${getRedirectURL()}/auth/callback`
+          redirectTo: `${getRedirectURL()}/auth/callback` 
         }
       })
       
       if (error) {
         console.error('Google SignIn error:', error)
         return { error: error.message }
+      }
+      
+      // Session kontrolü
+      if (data?.session?.access_token) {
+        localStorage.setItem('access_token', data.session.access_token)
       }
       
       return { error: null }

@@ -46,6 +46,22 @@ export default function Chat({
   })
 
   const handleNewMessage = async (content: string) => {
+    // Token kontrolü
+    const accessToken = localStorage.getItem('access_token')
+    if (!accessToken) {
+      console.error('No access token found')
+      const errorMessage: ChatMessage = {
+        id: Date.now().toString(),
+        type: 'error',
+        content: 'Oturum hatası. Lütfen tekrar giriş yapın.',
+        timestamp: new Date()
+      }
+      if (currentSessionId) {
+        onUpdateSession(currentSessionId, errorMessage)
+      }
+      return
+    }
+
     if (hasReachedLimit) {
       setIsLimitExceededOpen(true)
       return

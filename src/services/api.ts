@@ -23,17 +23,24 @@ const handleAuthError = async (error: any) => {
 
 export const searchProducts = async (query: string, sessionId?: string | null) => {
   try {
-    const { data: { session } } = await supabase.auth.getSession()
-    const accessToken = session?.access_token
+    // Önce localStorage'dan token'ı kontrol et
+    let accessToken = localStorage.getItem('access_token')
+    
+    // Token yoksa Supabase'den almayı dene
+    if (!accessToken) {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.access_token) {
+        accessToken = session.access_token
+        localStorage.setItem('access_token', accessToken)
+      }
+    }
 
     if (!accessToken) {
+      console.error('No access token found')
       throw new Error('Unauthorized')
     }
 
-    const body: any = { q: query }
-    if (sessionId) {
-      body.sessionId = sessionId
-    }
+    console.log('Making API request with token:', accessToken) // Debug için
 
     const response = await fetch(API_BASE_URL, {
       method: 'POST',
@@ -41,11 +48,15 @@ export const searchProducts = async (query: string, sessionId?: string | null) =
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify({ q: query, sessionId })
     })
+
+    // Response durumunu kontrol et
+    console.log('API Response status:', response.status)
 
     if (!response.ok) {
       if (response.status === 401) {
+        localStorage.removeItem('access_token')
         return handleAuthError(response)
       }
       throw new Error(`HTTP error! status: ${response.status}`)

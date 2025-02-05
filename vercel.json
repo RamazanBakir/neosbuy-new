@@ -10,7 +10,7 @@
     },
     {
       "source": "/auth/:path*",
-      "destination": "https://ixyuablustlfypjnjhpw.supabase.co/auth/:path*"
+      "destination": "/index.html"
     }
   ],
   "headers": [

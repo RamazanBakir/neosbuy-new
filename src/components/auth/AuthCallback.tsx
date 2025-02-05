@@ -14,8 +14,21 @@ export default function AuthCallback() {
 
         if (code) {
           // Exchange the code for a session
-          const { error } = await supabase.auth.exchangeCodeForSession(code)
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code)
           if (error) throw error
+          
+          if (data?.session) {
+            localStorage.setItem('access_token', data.session.access_token)
+            
+            // Session'ın tam olarak oluşmasını bekleyelim
+            await new Promise(resolve => setTimeout(resolve, 1000))
+            
+            // Session'ı tekrar kontrol edelim
+            const { data: { session: currentSession } } = await supabase.auth.getSession()
+            if (currentSession) {
+              navigate('/')
+            }
+          }
         }
 
         // Get the current session
