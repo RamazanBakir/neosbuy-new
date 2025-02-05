@@ -143,7 +143,7 @@ export default function Sidebar({
                   className="flex items-center w-full px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg"
                 >
                   <PlusIcon className="h-4 w-4 mr-2" />
-                  <span>Start New</span>
+                  <span>Start New 1</span>
                 </button>
 
                 {sessions.map((session) => (
