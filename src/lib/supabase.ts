@@ -12,7 +12,7 @@ if (!supabaseAnonKey) {
 }
 
 const redirectURL = import.meta.env.MODE === 'production' 
-  ? 'https://neosbuy.app/auth/callback'
+  ? 'https://neosbuy.app'
   : 'http://localhost:5173/auth/callback'
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {

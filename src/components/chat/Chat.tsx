@@ -46,117 +46,101 @@ export default function Chat({
   })
 
   const handleNewMessage = async (content: string) => {
-    // Token kontrolü
-    const accessToken = localStorage.getItem('access_token')
-    if (!accessToken) {
-      console.error('No access token found')
-      const errorMessage: ChatMessage = {
-        id: Date.now().toString(),
-        type: 'error',
-        content: 'Oturum hatası. Lütfen tekrar giriş yapın.',
-        timestamp: new Date()
-      }
-      if (currentSessionId) {
-        onUpdateSession(currentSessionId, errorMessage)
-      }
-      return
-    }
-
     if (hasReachedLimit) {
       setIsLimitExceededOpen(true)
       return
     }
 
+    // Önce currentSessionId'yi tanımla
     let currentSessionId = activeSessionId
     const isNewSession = !currentSessionId
 
-    if (isNewSession) {
-      const newSession: ChatSession = {
-        id: Date.now().toString(),
-        title: 'Yeni Sohbet',
-        createdAt: new Date(),
-        messages: [],
-        sessionId: null
-      }
-      setSessions(prev => [newSession, ...prev])
-      setActiveSessionId(newSession.id)
-      setCurrentSessionId(null)
-      currentSessionId = newSession.id
-    }
-
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
-      type: 'user',
-      content,
-      timestamp: new Date()
-    }
-
-    if (currentSessionId) {
-      onUpdateSession(currentSessionId, userMessage)
-    }
-    setIsLoading(true)
-
     try {
-      incrementCount()
-      const response = await searchProducts(content, currentSessionId)
-      console.log('Search response:', response)
-      
-      if (response.sessionId) {
-        setCurrentSessionId(response.sessionId)
-        console.log('Fetching history for new session:', response.sessionId)
-        
-        setSessions(prev => prev.map(session => {
-          if (session.id === currentSessionId) {
-            return { 
-              ...session, 
-              sessionId: response.sessionId,
-              title: `Sohbet #${response.sessionId.slice(0, 8)}`,
-              messages: session.messages
-            }
-          }
-          return session
-        }))
+      if (isNewSession) {
+        const newSession: ChatSession = {
+          id: Date.now().toString(),
+          title: 'Yeni Sohbet',
+          createdAt: new Date(),
+          messages: [],
+          sessionId: null
+        }
+        setSessions(prev => [newSession, ...prev])
+        setActiveSessionId(newSession.id)
+        currentSessionId = newSession.id
       }
-      
-      const aiMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        type: 'assistant',
-        content: response.productSearch?.data?.products?.length > 0 
-          ? response.aiSummary 
-          : response.aiResponse,
+
+      const userMessage: ChatMessage = {
+        id: Date.now().toString(),
+        type: 'user',
+        content,
         timestamp: new Date()
       }
 
-      if (response.productSearch?.data?.products?.length > 0) {
-        const productsMessage: ChatMessage = {
-          id: (Date.now() + 2).toString(),
+      if (currentSessionId) {
+        onUpdateSession(currentSessionId, userMessage)
+      }
+      setIsLoading(true)
+
+      try {
+        incrementCount()
+        const response = await searchProducts(content, currentSessionId)
+        
+        if (response.sessionId) {
+          setSessions(prev => prev.map(session => {
+            if (session.id === currentSessionId) {
+              return { 
+                ...session, 
+                sessionId: response.sessionId,
+                title: `Sohbet #${response.sessionId.slice(0, 8)}`,
+                messages: session.messages
+              }
+            }
+            return session
+          }))
+        }
+        
+        const aiMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
           type: 'assistant',
-          messageType: 'products',
-          content: response.productSearch.data.products.map(mapProduct),
+          content: response.productSearch?.data?.products?.length > 0 
+            ? response.aiSummary 
+            : response.aiResponse,
           timestamp: new Date()
         }
 
-        if (currentSessionId) {
-          onUpdateSession(currentSessionId, [aiMessage, productsMessage])
+        if (response.productSearch?.data?.products?.length > 0) {
+          const productsMessage: ChatMessage = {
+            id: (Date.now() + 2).toString(),
+            type: 'assistant',
+            messageType: 'products',
+            content: response.productSearch.data.products.map(mapProduct),
+            timestamp: new Date()
+          }
+
+          if (currentSessionId) {
+            onUpdateSession(currentSessionId, [aiMessage, productsMessage])
+          }
+        } else {
+          if (currentSessionId) {
+            onUpdateSession(currentSessionId, aiMessage)
+          }
         }
-      } else {
-        if (currentSessionId) {
-          onUpdateSession(currentSessionId, aiMessage)
+      } catch (error) {
+        console.error('Search error:', error)
+        const errorMessage: ChatMessage = {
+          id: Date.now().toString(),
+          type: 'error',
+          content: 'Üzgünüm, arama sırasında bir hata oluştu. Lütfen tekrar deneyin.',
+          timestamp: new Date()
         }
+        if (currentSessionId) {
+          onUpdateSession(currentSessionId, errorMessage)
+        }
+      } finally {
+        setIsLoading(false)
       }
     } catch (error) {
-      console.error('Search error:', error)
-      const errorMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        type: 'error',
-        content: 'Üzgünüm, arama sırasında bir hata oluştu. Lütfen tekrar deneyin.',
-        timestamp: new Date()
-      }
-      if (currentSessionId) {
-        onUpdateSession(currentSessionId, errorMessage)
-      }
-    } finally {
-      setIsLoading(false)
+      console.error('Session creation error:', error)
     }
   }
 
