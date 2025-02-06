@@ -141,11 +141,8 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
 
   const renderProductList = (products: BaseProduct[], messageId: string) => {
     const currentSlide = slideStates[messageId] || 0
-    const itemsPerPage = viewMode === 'grid' ? 3 : 1
-    const visibleProducts = products.slice(
-      currentSlide * itemsPerPage,
-      (currentSlide + 1) * itemsPerPage
-    )
+    const viewMode = viewModes[messageId] || 'grid'
+    const itemsPerPage = viewMode === 'grid' ? 3 : 3
 
     const setViewMode = (mode: ViewMode) => {
       setSlideStates(prev => ({ ...prev, [messageId]: 0 })) // Reset slide position when changing view mode
@@ -184,6 +181,11 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
         setIsSliding(false)
       }, 300)
     }
+
+    const visibleProducts = products.slice(
+      currentSlide * itemsPerPage,
+      currentSlide * itemsPerPage + itemsPerPage
+    )
 
     return (
       <div className="w-full">

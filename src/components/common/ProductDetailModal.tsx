@@ -13,6 +13,8 @@ interface ProductDetailModalProps {
   onPrevious?: () => void
   hasNext?: boolean
   hasPrevious?: boolean
+  viewMode: string
+  setViewMode: (mode: string) => void
 }
 
 export default function ProductDetailModal({ 
@@ -22,7 +24,9 @@ export default function ProductDetailModal({
   onNext,
   onPrevious,
   hasNext,
-  hasPrevious 
+  hasPrevious,
+  viewMode,
+  setViewMode
 }: ProductDetailModalProps) {
   if (!product) return null
 
@@ -97,6 +101,15 @@ export default function ProductDetailModal({
                       </div>
 
                       <div className="flex flex-col">
+                        <div className="flex items-center justify-between mb-4">
+                          <button
+                            onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
+                            className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                          >
+                            {viewMode === 'grid' ? 'List View' : 'Grid View'}
+                          </button>
+                        </div>
+
                         <h3 className="text-xl font-medium text-gray-900 dark:text-gray-100">
                           {product.title}
                         </h3>
