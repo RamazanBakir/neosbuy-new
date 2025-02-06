@@ -11,6 +11,7 @@ export interface BaseProduct {
   rating?: number
   store?: string
   store_name?: string
+  url?: string
 }
 
 export interface ChatMessage {
