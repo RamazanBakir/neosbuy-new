@@ -3,14 +3,27 @@ import { Fragment } from 'react'
 import { BaseProduct } from '../../types/chat'
 import { StarIcon } from '@heroicons/react/24/solid'
 import { XMarkIcon } from '@heroicons/react/24/outline'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 
 interface ProductDetailModalProps {
   product: BaseProduct | null
   isOpen: boolean
   onClose: () => void
+  onNext?: () => void
+  onPrevious?: () => void
+  hasNext?: boolean
+  hasPrevious?: boolean
 }
 
-export default function ProductDetailModal({ product, isOpen, onClose }: ProductDetailModalProps) {
+export default function ProductDetailModal({ 
+  product, 
+  isOpen, 
+  onClose,
+  onNext,
+  onPrevious,
+  hasNext,
+  hasPrevious 
+}: ProductDetailModalProps) {
   if (!product) return null
 
   return (
@@ -39,7 +52,33 @@ export default function ProductDetailModal({ product, isOpen, onClose }: Product
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-xl transition-all">
+              <Dialog.Panel className="relative w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 shadow-xl transition-all z-10">
+                {/* Navigation buttons - moved outside of panel content */}
+                <div className="fixed inset-0 flex items-center justify-between px-4 pointer-events-none">
+                  <div className="w-20 flex justify-start pointer-events-auto">
+                    {hasPrevious && (
+                      <button
+                        onClick={onPrevious}
+                        className="p-2 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        <ChevronLeftIcon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Modal content */}
+                  <div className="w-20 flex justify-end pointer-events-auto">
+                    {hasNext && (
+                      <button
+                        onClick={onNext}
+                        className="p-2 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        <ChevronRightIcon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                
                 <div className="flex justify-between items-start mb-4">
                   <Dialog.Title className="text-lg font-medium text-gray-900 dark:text-gray-100">
                     Ürün Detayları

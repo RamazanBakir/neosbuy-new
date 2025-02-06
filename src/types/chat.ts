@@ -12,6 +12,7 @@ export interface BaseProduct {
   store?: string
   store_name?: string
   url?: string
+  product_num_reviews?: number
 }
 
 export interface ChatMessage {

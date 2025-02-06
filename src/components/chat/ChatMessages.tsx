@@ -56,6 +56,9 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [selectedProduct, setSelectedProduct] = useState<BaseProduct | null>(null)
   const [isSliding, setIsSliding] = useState(false)
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [currentProducts, setCurrentProducts] = useState<BaseProduct[]>([])
+  const [currentProductIndex, setCurrentProductIndex] = useState<number>(0)
 
   // slideStates değiştiğinde localStorage'a kaydet
   useEffect(() => {
@@ -116,14 +119,33 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
     }
   }
 
-  const handleProductClick = (product: BaseProduct) => {
+  const handleProductClick = (product: BaseProduct, products: BaseProduct[]) => {
     setSelectedProduct(product)
+    setCurrentProducts(products)
+    setCurrentProductIndex(products.findIndex(p => p.title === product.title))
+  }
+
+  const handleNextProduct = () => {
+    if (currentProductIndex < currentProducts.length - 1) {
+      setCurrentProductIndex(currentProductIndex + 1)
+      setSelectedProduct(currentProducts[currentProductIndex + 1])
+    }
+  }
+
+  const handlePreviousProduct = () => {
+    if (currentProductIndex > 0) {
+      setCurrentProductIndex(currentProductIndex - 1)
+      setSelectedProduct(currentProducts[currentProductIndex - 1])
+    }
   }
 
   const renderProductList = (products: BaseProduct[], messageId: string) => {
     const currentSlide = slideStates[messageId] || 0
-    const viewMode = viewModes[messageId] || 'grid'
-    const itemsPerPage = viewMode === 'grid' ? 2 : 3
+    const itemsPerPage = viewMode === 'grid' ? 3 : 1
+    const visibleProducts = products.slice(
+      currentSlide * itemsPerPage,
+      (currentSlide + 1) * itemsPerPage
+    )
 
     const setViewMode = (mode: ViewMode) => {
       setSlideStates(prev => ({ ...prev, [messageId]: 0 })) // Reset slide position when changing view mode
@@ -162,11 +184,6 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
         setIsSliding(false)
       }, 300)
     }
-
-    const visibleProducts = products.slice(
-      currentSlide * itemsPerPage, 
-      currentSlide * itemsPerPage + itemsPerPage
-    )
 
     return (
       <div className="w-full">
@@ -213,50 +230,62 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
 
             <div className={`${
               viewMode === 'grid' 
-                ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' 
+                ? 'grid grid-cols-3 gap-4' 
                 : 'flex flex-col space-y-4'
             } w-full relative`}>
               {visibleProducts.map((product, index) => (
-                <div key={index} className={`${
-                  viewMode === 'grid' 
-                    ? 'flex flex-col w-full max-w-xs mx-auto' 
-                    : 'flex flex-row space-x-4 w-full'
+                <div key={index} className={`bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden ${
+                  viewMode === 'list' ? 'flex flex-row' : ''
                 }`}>
                   <div 
-                    onClick={() => handleProductClick(product)}
-                    className={`relative overflow-hidden rounded-lg group cursor-pointer ${
-                      viewMode === 'grid' ? 'w-full h-48' : 'w-32 h-32'
+                    onClick={() => handleProductClick(product, products)}
+                    className={`relative overflow-hidden cursor-pointer ${
+                      viewMode === 'list' ? 'w-48 h-48' : 'aspect-square'
                     }`}
                   >
                     <img 
                       src={product.image || product.photo || (product.photos?.[0]) || ''}
                       alt={product.title}
-                      className="w-full h-full object-contain bg-gray-50 dark:bg-gray-900"
+                      className="w-full h-full object-contain bg-gray-50 dark:bg-gray-900 p-4"
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <div className="absolute inset-0 bg-black/0 hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 hover:opacity-100">
                       <MagnifyingGlassIcon className="h-8 w-8 text-white" />
                     </div>
                   </div>
-                  <div className={`${viewMode === 'grid' ? 'mt-4' : ''} flex-1`}>
-                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">
+
+                  <div className={`p-4 ${viewMode === 'list' ? 'flex-1' : ''}`}>
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2 mb-2">
                       {product.title}
                     </h3>
-                    <div className="mt-2 flex items-center justify-between">
-                      <p className="text-lg font-medium text-gray-900 dark:text-gray-100">
+
+                    <div className="flex items-center mb-2">
+                      <div className="flex items-center">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <StarIcon 
+                            key={star}
+                            className={`h-4 w-4 ${
+                              star <= Math.floor(Number(product.rating || 0))
+                                ? 'text-yellow-400'
+                                : 'text-gray-300'
+                            }`}
+                          />
+                        ))}
+                        {product.rating && (
+                          <span className="ml-2 text-xs text-gray-600 dark:text-gray-400">
+                            ({product.product_num_reviews || '0'} değerlendirme)
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                         {typeof product.price === 'number' ? `${product.price} TL` : product.price}
                       </p>
-                      {product.rating && (
-                        <div className="flex items-center">
-                          <StarIcon className="h-5 w-5 text-yellow-400" />
-                          <span className="ml-1 text-sm text-gray-600 dark:text-gray-300">
-                            {product.rating}
-                          </span>
-                        </div>
-                      )}
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {product.store || product.store_name}
+                      </p>
                     </div>
-                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                      {product.store || product.store_name}
-                    </p>
                   </div>
                 </div>
               ))}
@@ -402,7 +431,15 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
       <ProductDetailModal
         product={selectedProduct}
         isOpen={!!selectedProduct}
-        onClose={() => setSelectedProduct(null)}
+        onClose={() => {
+          setSelectedProduct(null)
+          setCurrentProducts([])
+          setCurrentProductIndex(0)
+        }}
+        onNext={handleNextProduct}
+        onPrevious={handlePreviousProduct}
+        hasNext={currentProductIndex < currentProducts.length - 1}
+        hasPrevious={currentProductIndex > 0}
       />
     </>
   )

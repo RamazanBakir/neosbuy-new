@@ -44,6 +44,7 @@ export default function Chat({
     rating: product.product_rating || product.rating,
     store: product.offer?.store_name || product.store_name || product.store,
     url: product.offer?.offer_page_url || product.url,
+    product_num_reviews: product.product_num_reviews
   })
 
   const handleNewMessage = async (content: string) => {
