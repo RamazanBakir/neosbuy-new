@@ -11,9 +11,7 @@ if (!supabaseAnonKey) {
   throw new Error('Missing VITE_SUPABASE_ANON_KEY environment variable')
 }
 
-const redirectURL = import.meta.env.MODE === 'production' 
-  ? 'https://neosbuy.app/auth/callback'
-  : 'http://localhost:5173/auth/callback'
+const redirectURL = 'https://ixyuablustlfypjnjhpw.supabase.co/auth/v1/callback'
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -38,14 +36,26 @@ supabase.auth.onAuthStateChange((event, _session) => {
 export const getRedirectURL = () => redirectURL
 
 export const signInWithGoogle = async () => {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: redirectURL
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: 'https://ixyuablustlfypjnjhpw.supabase.co/auth/v1/callback',
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        }
+      }
+    })
+    
+    if (error) {
+      console.error('Google SignIn error:', error)
+      return { error: error.message }
     }
-  })
-  if (error) {
-    console.error('Error signing in with Google:', error)
-    throw error
+    
+    return { error: null }
+  } catch (err) {
+    console.error('Unexpected error during Google signin:', err)
+    return { error: 'Beklenmeyen bir hata oluştu' }
   }
 }
