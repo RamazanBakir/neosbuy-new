@@ -246,7 +246,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                     }`}
                   >
                     <img 
-                      src={product.image || product.photo || (product.photos?.[0]) || ''}
+                      src={product.image}
                       alt={product.title}
                       className="w-full h-full object-contain bg-gray-50 dark:bg-gray-900 p-4"
                     />
@@ -255,38 +255,50 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                     </div>
                   </div>
 
-                  <div className={`p-4 ${viewMode === 'list' ? 'flex-1' : ''}`}>
-                    <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2 mb-2">
+                  <div className="p-4 flex-1">
+                    <h3 
+                      onClick={() => handleProductClick(product, products)}
+                      className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-colors"
+                    >
                       {product.title}
                     </h3>
 
-                    <div className="flex items-center mb-2">
-                      <div className="flex items-center">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <StarIcon 
-                            key={star}
-                            className={`h-4 w-4 ${
-                              star <= Math.floor(Number(product.rating || 0))
-                                ? 'text-yellow-400'
-                                : 'text-gray-300'
-                            }`}
-                          />
-                        ))}
-                        {product.rating && (
-                          <span className="ml-2 text-xs text-gray-600 dark:text-gray-400">
-                            ({product.product_num_reviews || '0'} değerlendirme)
-                          </span>
-                        )}
-                      </div>
+                    <div 
+                      onClick={() => handleProductClick(product, products)}
+                      className="mt-2 flex items-center cursor-pointer"
+                    >
+                      {[...Array(5)].map((_, i) => (
+                        <StarIcon
+                          key={i}
+                          className={`h-5 w-5 ${
+                            i < Math.floor(product.rating || 0)
+                              ? 'text-yellow-400'
+                              : 'text-gray-300 dark:text-gray-600'
+                          }`}
+                        />
+                      ))}
+                      {product.rating && (
+                        <span className="ml-2 text-xs text-gray-600 dark:text-gray-400">
+                          ({product.product_num_reviews || '0'} değerlendirme)
+                        </span>
+                      )}
                     </div>
 
-                    <div className="flex items-center justify-between">
-                      <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    <div className="flex items-center justify-between mt-2">
+                      <p 
+                        onClick={() => handleProductClick(product, products)}
+                        className="text-lg font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer"
+                      >
                         {typeof product.price === 'number' ? `${product.price} TL` : product.price}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <a
+                        href={product.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                      >
                         {product.store || product.store_name}
-                      </p>
+                      </a>
                     </div>
                   </div>
                 </div>

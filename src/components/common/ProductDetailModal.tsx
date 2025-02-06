@@ -123,6 +123,11 @@ export default function ProductDetailModal({
                               <StarIcon className="h-5 w-5 text-yellow-400" />
                               <span className="ml-1 text-sm text-gray-600 dark:text-gray-300">
                                 {product.rating}
+                                {product.product_num_reviews && (
+                                  <span className="ml-1 text-xs">
+                                    ({product.product_num_reviews} değerlendirme)
+                                  </span>
+                                )}
                               </span>
                             </div>
                           )}
@@ -131,6 +136,37 @@ export default function ProductDetailModal({
                         <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                           {product.store || product.store_name}
                         </p>
+
+                        {product.description && (
+                          <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                            <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
+                              Ürün Açıklaması
+                            </h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                              {product.description}
+                            </p>
+                          </div>
+                        )}
+
+                        {product.product_attributes && Object.keys(product.product_attributes).length > 0 && (
+                          <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                            <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-4">
+                              Ürün Özellikleri
+                            </h4>
+                            <div className="space-y-3">
+                              {Object.entries(product.product_attributes).map(([key, value]) => (
+                                <div key={key} className="flex justify-between items-start py-2 border-b border-gray-200 dark:border-gray-700/50 last:border-0">
+                                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    {key}
+                                  </span>
+                                  <span className="text-sm text-gray-600 dark:text-gray-400 text-right">
+                                    {String(value)}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
 
                         <a
                           href={product.url}
