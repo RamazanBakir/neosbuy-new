@@ -42,7 +42,8 @@ export default function Chat({
     description: product.product_description || product.description,
     image: product.product_photos?.[0] || product.image || product.photo,
     rating: product.product_rating || product.rating,
-    store: product.offer?.store_name || product.store_name || product.store
+    store: product.offer?.store_name || product.store_name || product.store,
+    url: product.offer?.offer_page_url || product.url,
   })
 
   const handleNewMessage = async (content: string) => {
