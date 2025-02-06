@@ -10,6 +10,8 @@ export interface BaseProduct {
   store_name?: string;
   url?: string;
   product_num_reviews?: number;
+  image?: string;
+  product_photos?: string[];
   product_attributes?: {
     [key: string]: string | number;
   };
