@@ -18,7 +18,7 @@ import ImageViewer from '../common/ImageViewer'
 import Tooltip from '../common/Tooltip'
 import { useSpeech } from '../../hooks/useSpeech'
 import LanguageMenu from '../common/LanguageMenu'
-import { useTranslation } from '../../hooks/useTranslation'
+import { useTranslation } from 'react-i18next'
 import ProductDetailModal from '../common/ProductDetailModal'
 import { useTranslation as useI18nTranslation } from 'react-i18next'
 
@@ -38,7 +38,7 @@ interface ChatMessagesProps {
 }
 
 export default function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
-  const { t } = useI18nTranslation()
+  const { t } = useTranslation()
   const { translate, isTranslating } = useTranslation()
   const displayedMessage = useLoadingMessages()
   const [slideStates, setSlideStates] = useState<Record<string, number>>(() => {
@@ -342,13 +342,13 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               <button className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors text-gray-700 dark:text-gray-200">
-                Benzer Ürünler
+                {t('chat.similarProducts')}
               </button>
               <button className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors text-gray-700 dark:text-gray-200">
-                İndirimli Ürünler
+                {t('chat.discountedProducts')}
               </button>
               <button className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors text-gray-700 dark:text-gray-200">
-                En Çok Satanlar
+                {t('chat.bestSellers')}
               </button> 
             </div>
           </div>

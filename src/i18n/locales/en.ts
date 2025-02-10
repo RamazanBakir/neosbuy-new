@@ -51,7 +51,10 @@ export default {
     newChatTitle: 'New Chat',
     searchError: 'Sorry, an error occurred during the search. Please try again.',
     freeTrial: 'Free trial: {{count}} questions remaining.',
-    loginNow: 'login now'
+    loginNow: 'login now',
+    similarProducts: 'Similar Products',
+    discountedProducts: 'Discounted Products',
+    bestSellers: 'Best Sellers'
   },
   limits: {
     freeTrialRemaining: 'Free trial: {{count}} questions remaining',

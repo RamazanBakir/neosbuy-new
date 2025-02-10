@@ -51,7 +51,10 @@ export default {
     newChatTitle: 'Neuer Chat',
     searchError: 'Entschuldigung, bei der Suche ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
     freeTrial: 'Kostenlose Testversion: noch {{count}} Fragen.',
-    loginNow: 'jetzt anmelden'
+    loginNow: 'jetzt anmelden',
+    similarProducts: 'Ähnliche Produkte',
+    discountedProducts: 'Reduzierte Produkte',
+    bestSellers: 'Bestseller'
   },
   limits: {
     freeTrialRemaining: 'Kostenlose Testversion: {{count}} Fragen übrig',

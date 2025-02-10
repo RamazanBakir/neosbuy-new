@@ -51,7 +51,10 @@ export default {
     newChatTitle: 'Yeni Sohbet',
     searchError: 'Üzgünüm, arama sırasında bir hata oluştu. Lütfen tekrar deneyin.',
     freeTrial: 'Ücretsiz deneme: {{count}} soru hakkınız kaldı.',
-    loginNow: 'giriş yapın'
+    loginNow: 'giriş yapın',
+    similarProducts: 'Benzer Ürünler',
+    discountedProducts: 'İndirimli Ürünler',
+    bestSellers: 'En Çok Satanlar'
   },
   limits: {
     freeTrialRemaining: 'Ücretsiz deneme: {{count}} soru hakkınız kaldı',
