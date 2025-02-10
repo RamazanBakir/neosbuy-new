@@ -374,7 +374,9 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                         ? 'bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400'
                         : 'bg-gray-100 dark:bg-[#444654] text-gray-900 dark:text-gray-100'
                   }`}>
-                    {typeof message.content === 'string' && <p className="text-sm">{message.content}</p>}
+                    {typeof message.content === 'string' && (
+                      <p className="text-sm">{message.content}</p>
+                    )}
                     {message.type === 'assistant' && !message.messageType && (
                       <div className="mt-2 flex items-center space-x-2 text-xs text-gray-500">
                         <Tooltip text="Metni Kopyala" position="bottom">
