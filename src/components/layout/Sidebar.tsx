@@ -17,16 +17,17 @@ import {
   XMarkIcon
 } from '@heroicons/react/24/outline'
 import ContextMenu from '../common/ContextMenu'
+import { useTranslation } from 'react-i18next'
 
 const tools = [
-  { icon: ChatBubbleLeftIcon, label: 'AI Chat', active: true },
+  { icon: ChatBubbleLeftIcon, label: 'sidebar.aiChat', active: true },
 ]
 
 const others = [
-  { icon: Square2StackIcon, label: 'Extension' },
-  { icon: QuestionMarkCircleIcon, label: 'Support' },
-  { icon: Cog6ToothIcon, label: 'Pricing Plans' },
-  { icon: Cog6ToothIcon, label: 'Profile & Settings' }
+  { icon: Square2StackIcon, label: 'sidebar.extension' },
+  { icon: QuestionMarkCircleIcon, label: 'sidebar.support' },
+  { icon: Cog6ToothIcon, label: 'sidebar.pricingPlans' },
+  { icon: Cog6ToothIcon, label: 'sidebar.profileSettings' }
 ]
 
 interface SidebarProps {
@@ -59,6 +60,7 @@ export default function Sidebar({
     y: number
     sessionId: string
   } | null>(null)
+  const { t } = useTranslation()
 
   const handleSettingsClick = () => {
     if (user) {
@@ -143,7 +145,7 @@ export default function Sidebar({
                   className="flex items-center w-full px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg"
                 >
                   <PlusIcon className="h-4 w-4 mr-2" />
-                  <span>Start New 1</span>
+                  <span>{t('sidebar.newChat')}</span>
                 </button>
 
                 {sessions.map((session) => (
@@ -164,7 +166,7 @@ export default function Sidebar({
                               if (e.key === 'Escape') handleEditCancel()
                             }}
                             maxLength={50}
-                            placeholder="Enter ile kaydedin veya ikona tıklayın"
+                            placeholder={t('sidebar.search')}
                             className="w-full px-2 py-1 pr-16 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                             autoFocus
                           />
@@ -172,14 +174,14 @@ export default function Sidebar({
                             <button
                               onClick={handleEditSave}
                               className="p-1 text-gray-400 hover:text-green-500"
-                              title="Kaydet"
+                              title={t('sidebar.save')}
                             >
                               <CheckIcon className="h-4 w-4" />
                             </button>
                             <button
                               onClick={handleEditCancel}
                               className="p-1 text-gray-400 hover:text-red-500"
-                              title="İptal"
+                              title={t('sidebar.cancel')}
                             >
                               <XMarkIcon className="h-4 w-4" />
                             </button>
@@ -203,14 +205,14 @@ export default function Sidebar({
                           <button
                             onClick={() => handleEditStart(session)}
                             className="p-2 text-gray-400 hover:text-blue-500 dark:hover:text-blue-400"
-                            title="Başlığı düzenle"
+                            title={t('sidebar.edit')}
                           >
                             <PencilIcon className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => onDeleteSession(session.id)}
                             className="p-2 text-gray-400 hover:text-red-500 dark:hover:text-red-400"
-                            title="Sohbeti sil"
+                            title={t('sidebar.delete')}
                           >
                             <TrashIcon className="h-4 w-4" />
                           </button>
@@ -224,19 +226,39 @@ export default function Sidebar({
           </div>
         </div>
 
-        <div className="px-3 mb-6">
-          <h2 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase px-3 mb-2">Others</h2>
-          <div className="space-y-1">
-            {others.map((item) => (
-              <button
-                key={item.label}
-                onClick={item.label === 'Profile & Settings' ? handleSettingsClick : undefined}
-                className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg"
-              >
-                <item.icon className="h-5 w-5" />
-                <span className="text-sm">{item.label}</span>
-              </button>
-            ))}
+        <div className="px-3 py-2">
+          <h3 className="px-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+            {t('sidebar.others')}
+          </h3>
+          <div className="mt-2 space-y-1">
+            <button
+              className="flex w-full items-center px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+              onClick={() => {/* handle click */}}
+            >
+              <Square2StackIcon className="h-5 w-5 mr-2" />
+              {t('sidebar.extension')}
+            </button>
+            <button
+              className="flex w-full items-center px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+              onClick={() => {/* handle click */}}
+            >
+              <QuestionMarkCircleIcon className="h-5 w-5 mr-2" />
+              {t('sidebar.support')}
+            </button>
+            <button
+              className="flex w-full items-center px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+              onClick={() => {/* handle click */}}
+            >
+              <ChatBubbleLeftIcon className="h-5 w-5 mr-2" />
+              {t('sidebar.pricingPlans')}
+            </button>
+            <button
+              className="flex w-full items-center px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+              onClick={() => setIsSettingsOpen(true)}
+            >
+              <Cog6ToothIcon className="h-5 w-5 mr-2" />
+              {t('sidebar.profileSettings')}
+            </button>
           </div>
         </div>
       </div>

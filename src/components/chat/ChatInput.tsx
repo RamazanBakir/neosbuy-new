@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { PaperAirplaneIcon } from '@heroicons/react/24/solid'
+import { useTranslation } from 'react-i18next'
 
 interface ChatInputProps {
   onSubmit: (message: string) => void
 }
 
 export default function ChatInput({ onSubmit }: ChatInputProps) {
+  const { t } = useTranslation()
   const [message, setMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -21,7 +23,7 @@ export default function ChatInput({ onSubmit }: ChatInputProps) {
     try {
       await onSubmit(currentMessage)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Bir hata oluştu')
+      setError(err instanceof Error ? err.message : t('common.error'))
       setMessage(currentMessage) // Hata durumunda mesajı geri getir
     } finally {
       setIsLoading(false)
@@ -45,7 +47,7 @@ export default function ChatInput({ onSubmit }: ChatInputProps) {
           className="w-full px-4 py-3 pr-12 rounded-lg resize-none focus:outline-none focus:ring-0 
             bg-white dark:bg-[#2A2B32] text-gray-900 dark:text-gray-100 
             placeholder-gray-500 dark:placeholder-gray-400"
-          placeholder={isLoading ? "Yanıt bekleniyor..." : "Ürün aramak için bir şeyler yazın..."}
+          placeholder={t('input.placeholder')}
           rows={1}
           disabled={isLoading}
         />

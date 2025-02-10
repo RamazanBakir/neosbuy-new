@@ -20,6 +20,7 @@ import { useSpeech } from '../../hooks/useSpeech'
 import LanguageMenu from '../common/LanguageMenu'
 import { useTranslation } from '../../hooks/useTranslation'
 import ProductDetailModal from '../common/ProductDetailModal'
+import { useTranslation as useI18nTranslation } from 'react-i18next'
 
 const LoadingDots = () => (
   <div className="flex space-x-1">
@@ -37,6 +38,8 @@ interface ChatMessagesProps {
 }
 
 export default function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
+  const { t } = useI18nTranslation()
+  const { translate, isTranslating } = useTranslation()
   const displayedMessage = useLoadingMessages()
   const [slideStates, setSlideStates] = useState<Record<string, number>>(() => {
     const saved = localStorage.getItem('slide_states')
@@ -51,7 +54,6 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
   const [selectedImage, setSelectedImage] = useState<{url: string; alt: string} | null>(null)
   const { speak, stop, isSpeaking } = useSpeech()
   const [languageMenu, setLanguageMenu] = useState<{ x: number; y: number } | null>(null)
-  const { translate, isTranslating } = useTranslation()
   const [selectedText, setSelectedText] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [selectedProduct, setSelectedProduct] = useState<BaseProduct | null>(null)
@@ -336,7 +338,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
 
           <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              Başka bir ürün kategorisi aramak ister misiniz?
+              {t('chat.searchAnotherCategory')}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               <button className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors text-gray-700 dark:text-gray-200">
@@ -394,7 +396,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                             <SpeakerWaveIcon className="h-4 w-4" />
                           </button>
                         </Tooltip>
-                        <Tooltip text={isTranslating ? "Çeviriliyor..." : "Çeviri"} position="bottom">
+                        <Tooltip text={isTranslating ? t('chat.translating') : t('chat.translate')} position="bottom">
                           <button 
                             onClick={(e) => typeof message.content === 'string' && handleTranslateClick(e, message.content)}
                             className={`hover:bg-gray-200 dark:hover:bg-gray-700 p-1.5 rounded-full transition-all duration-200 active:scale-90 active:bg-gray-300 dark:active:bg-gray-600 ${

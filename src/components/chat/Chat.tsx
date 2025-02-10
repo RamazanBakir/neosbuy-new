@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useQuestionLimit } from '../../hooks/useQuestionLimit'
 import AuthModal from '../auth/AuthModal'
 import LimitExceededModal from '../auth/LimitExceededModal'
+import { useTranslation } from 'react-i18next'
 
 interface ChatProps {
   activeSessionId: string | null
@@ -31,6 +32,7 @@ export default function Chat({
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [isLimitExceededOpen, setIsLimitExceededOpen] = useState(false)
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
+  const { t } = useTranslation()
 
   // Get current session's messages
   const currentSession = sessions.find(s => s.id === activeSessionId)
@@ -61,7 +63,7 @@ export default function Chat({
       if (isNewSession) {
         const newSession: ChatSession = {
           id: Date.now().toString(),
-          title: 'Yeni Sohbet',
+          title: t('chat.newChatTitle'),
           createdAt: new Date(),
           messages: [],
           sessionId: null
@@ -132,7 +134,7 @@ export default function Chat({
         const errorMessage: ChatMessage = {
           id: Date.now().toString(),
           type: 'error',
-          content: 'Üzgünüm, arama sırasında bir hata oluştu. Lütfen tekrar deneyin.',
+          content: t('chat.searchError'),
           timestamp: new Date()
         }
         if (currentSessionId) {
@@ -155,9 +157,9 @@ export default function Chat({
       <div className="relative max-w-4xl mx-auto w-full px-4 pb-4">
         {!user && !hasReachedLimit && (
           <div className="bg-blue-50 p-4 text-sm text-blue-700 mb-4 rounded-lg">
-            Ücretsiz deneme: {remainingQuestions} soru hakkınız kaldı. 
+            {t('chat.freeTrial', { count: remainingQuestions })}
             <button onClick={() => setIsAuthModalOpen(true)} className="font-medium underline hover:text-blue-800 ml-1">
-              giriş yapın
+              {t('chat.loginNow')}
             </button>
           </div>
         )}

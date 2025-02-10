@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import AuthModal from '../auth/AuthModal'
 import ProfileDropdown from './ProfileDropdown'
+import LanguageSwitcher from '../common/LanguageSwitcher'
+import { ThemeToggle } from '../common/ThemeToggle'
 
 interface HeaderProps {
   onMenuClick: () => void
@@ -28,16 +30,8 @@ export default function Header({ onMenuClick }: HeaderProps) {
         </div>
         
         <div className="flex items-center gap-2">
-          <button
-            onClick={toggleTheme}
-            className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
-          >
-            {theme === 'dark' ? (
-              <SunIcon className="h-5 w-5" />
-            ) : (
-              <MoonIcon className="h-5 w-5" />
-            )}
-          </button>
+          <LanguageSwitcher />
+          <ThemeToggle />
           
           {user ? (
             <ProfileDropdown 

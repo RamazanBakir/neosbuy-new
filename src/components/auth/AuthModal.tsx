@@ -3,6 +3,7 @@ import { Fragment, useState } from 'react'
 import { XMarkIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 import { useAuth } from '../../context/AuthContext'
 import GoogleIcon from '../icons/GoogleIcon'
+import { useTranslation } from 'react-i18next'
 
 interface AuthModalProps {
   isOpen: boolean
@@ -17,6 +18,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { t } = useTranslation()
 
   const handleGoogleSignIn = async () => {
     try {
@@ -69,14 +71,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   }
 
   const translateError = (error: string) => {
-    const errorMessages: { [key: string]: string } = {
-      'Invalid login credentials': 'Geçersiz email veya şifre',
-      'User already registered': 'Bu email adresi zaten kayıtlı',
-      'Password should be at least 6 characters': 'Şifre en az 6 karakter olmalıdır',
-      'Invalid email': 'Geçersiz email adresi',
-    }
-
-    return errorMessages[error] || error
+    return t(`errors.${error}`) || error
   }
 
   return (
@@ -99,7 +94,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-8 shadow-xl transition-all">
               <div className="flex justify-between items-center mb-6">
                 <Dialog.Title as="h3" className="text-xl font-semibold text-gray-900">
-                  {isRegister ? 'Hesap Oluştur' : 'Giriş Yap'}
+                  {isRegister ? t('auth.signUp') : t('auth.signIn')}
                 </Dialog.Title>
                 <button onClick={onClose} className="text-gray-400 hover:text-gray-500">
                   <XMarkIcon className="h-6 w-6" />
@@ -178,7 +173,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     disabled={loading}
                     className="w-full py-2.5 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 font-medium"
                   >
-                    {loading ? 'İşleniyor...' : (isRegister ? 'Kayıt Ol' : 'Giriş Yap')}
+                    {loading ? t('common.loading') : (isRegister ? t('auth.signUp') : t('auth.signIn'))}
                   </button>
 
                   <button
@@ -186,8 +181,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     className="w-full text-sm text-blue-600 hover:text-blue-700 font-medium"
                   >
                     {isRegister 
-                      ? 'Zaten hesabın var mı? Giriş yap' 
-                      : 'Hesabın yok mu? Kayıt ol'}
+                      ? t('auth.haveAccount')
+                      : t('auth.noAccount')}
                   </button>
                 </div>
               </div>

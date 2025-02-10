@@ -7,8 +7,10 @@ import { AuthProvider } from './context/AuthContext'
 import { useState, useEffect } from 'react'
 import { ChatMessage, ChatSession } from './types/chat'
 import AuthCallback from './components/auth/AuthCallback'
+import { useTranslation } from 'react-i18next'
 
 export default function App() {
+  const { t } = useTranslation()
   const [sessions, setSessions] = useState<ChatSession[]>(() => {
     const savedSessions = localStorage.getItem('chat_sessions')
     return savedSessions ? JSON.parse(savedSessions) : []
@@ -114,7 +116,7 @@ export default function App() {
                       {showTools && (
                         <>
                           <h1 className="text-2xl font-bold text-center mb-8">
-                            How can I help you today?
+                            {t('chat.howCanIHelpYouToday')}
                           </h1>
                           <ChatTools />
                         </>

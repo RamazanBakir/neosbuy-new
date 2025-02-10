@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { UserIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
 import SettingsModal from '../settings/SettingsModal'
+import { useTranslation } from 'react-i18next'
 
 interface ProfileDropdownProps {
   email: string | undefined
@@ -9,13 +10,14 @@ interface ProfileDropdownProps {
 }
 
 export default function ProfileDropdown({ email, onSignOut }: ProfileDropdownProps) {
+  const { t } = useTranslation()
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
   return (
     <Menu as="div" className="relative">
       <Menu.Button className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100">
         <UserIcon className="h-5 w-5" />
-        <span>{email ? email.split('@')[0] : 'Profil'}</span>
+        <span>{email ? email.split('@')[0] : t('profile.profile')}</span>
       </Menu.Button>
 
       <Transition
@@ -38,7 +40,7 @@ export default function ProfileDropdown({ email, onSignOut }: ProfileDropdownPro
                   } flex w-full items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300`}
                 >
                   <Cog6ToothIcon className="h-5 w-5 mr-2" />
-                  Ayarlar
+                  {t('profile.settings')}
                 </button>
               )}
             </Menu.Item>
@@ -51,7 +53,7 @@ export default function ProfileDropdown({ email, onSignOut }: ProfileDropdownPro
                   } flex w-full items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300`}
                 >
                   <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2" />
-                  Çıkış Yap
+                  {t('profile.logout')}
                 </button>
               )}
             </Menu.Item>
