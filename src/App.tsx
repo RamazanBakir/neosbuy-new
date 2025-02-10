@@ -132,7 +132,7 @@ export default function App() {
                     <div className="flex-1">
                       {showTools && (
                         <>
-                          <h1 className="text-2xl font-bold text-center mb-8">
+                          <h1 className="text-2xl font-bold text-center mb-8 text-gray-900 dark:text-gray-100">
                             {t('chat.howCanIHelpYouToday')}
                           </h1>
                           <ChatTools />
