@@ -3,7 +3,7 @@ import Layout from './components/layout/Layout'
 import ChatTools from './components/chat/ChatTools'
 import Chat from './components/chat/Chat'
 import { ThemeProvider } from './context/ThemeContext'
-import { AuthProvider } from './context/AuthContext'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import { useState, useEffect } from 'react'
 import { ChatMessage, ChatSession } from './types/chat'
 import AuthCallback from './components/auth/AuthCallback'
@@ -11,9 +11,14 @@ import { useTranslation } from 'react-i18next'
 
 export default function App() {
   const { t } = useTranslation()
+  const { user } = useAuth()
+  
   const [sessions, setSessions] = useState<ChatSession[]>(() => {
-    const savedSessions = localStorage.getItem('chat_sessions')
-    return savedSessions ? JSON.parse(savedSessions) : []
+    if (user) {
+      const savedSessions = localStorage.getItem('chat_sessions')
+      return savedSessions ? JSON.parse(savedSessions) : []
+    }
+    return []
   })
   
   const [activeSessionId, setActiveSessionId] = useState<string | null>(() => {
@@ -30,12 +35,24 @@ export default function App() {
     localStorage.setItem('show_tools', JSON.stringify(showTools))
   }, [showTools])
 
-  // Sessions değiştiğinde localStorage'a kaydet
   useEffect(() => {
-    localStorage.setItem('chat_sessions', JSON.stringify(sessions))
-  }, [sessions])
+    if (user && sessions.length > 0) {
+      localStorage.setItem('chat_sessions', JSON.stringify(sessions))
+    }
+  }, [sessions, user])
 
-  // Active session değiştiğinde localStorage'a kaydet
+  useEffect(() => {
+    if (!user) {
+      setSessions([])
+      setActiveSessionId(null)
+    } else {
+      const savedSessions = localStorage.getItem('chat_sessions')
+      if (savedSessions) {
+        setSessions(JSON.parse(savedSessions))
+      }
+    }
+  }, [user])
+
   useEffect(() => {
     if (activeSessionId) {
       localStorage.setItem('active_session_id', activeSessionId)

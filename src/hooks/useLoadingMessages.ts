@@ -1,27 +1,23 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useTypingAnimation } from './useTypingAnimation'
 
-export const useLoadingMessages = () => {
+export function useLoadingMessages() {
   const { t } = useTranslation()
-  const loadingMessages = t('loading.messages', { returnObjects: true }) as string[]
-  
-  const [currentMessage, setCurrentMessage] = useState(() => {
-    return loadingMessages[Math.floor(Math.random() * loadingMessages.length)]
-  })
-  
-  const { displayedMessage, isComplete } = useTypingAnimation(currentMessage, 70)
+  const [currentMessage, setCurrentMessage] = useState('')
+  const messages = t('loading.messages', { returnObjects: true }) as string[]
 
   useEffect(() => {
-    if (!isComplete) return
+    if (!messages?.length) return
+    
+    // İlk mesajı hemen göster
+    setCurrentMessage(messages[Math.floor(Math.random() * messages.length)])
 
-    const timeout = setTimeout(() => {
-      const randomIndex = Math.floor(Math.random() * loadingMessages.length)
-      setCurrentMessage(loadingMessages[randomIndex])
-    }, 2000)
+    const interval = setInterval(() => {
+      setCurrentMessage(messages[Math.floor(Math.random() * messages.length)])
+    }, 3000)
 
-    return () => clearTimeout(timeout)
-  }, [isComplete, loadingMessages])
+    return () => clearInterval(interval)
+  }, [messages])
 
-  return displayedMessage
+  return currentMessage
 } 

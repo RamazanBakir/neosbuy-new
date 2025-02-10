@@ -27,7 +27,9 @@ export default {
     dontHaveAccount: 'Kein Konto? Registrieren',
     enterEmailPassword: 'Bitte E-Mail und Passwort eingeben',
     haveAccount: 'Bereits ein Konto? Anmelden',
-    noAccount: 'Kein Konto? Registrieren'
+    noAccount: 'Kein Konto? Registrieren',
+    continueWithGoogle: 'Weiter mit Google',
+    orContinueWithEmail: 'oder weiter mit E-Mail'
   },
   chat: {
     newChat: 'Neuer Chat',
@@ -54,7 +56,14 @@ export default {
     loginNow: 'jetzt anmelden',
     similarProducts: 'Ähnliche Produkte',
     discountedProducts: 'Reduzierte Produkte',
-    bestSellers: 'Bestseller'
+    bestSellers: 'Bestseller',
+    ongoing: 'Laufend',
+    copyError: 'Kopierfehler',
+    imageAlt: 'Produktbild',
+    viewProduct: 'Produkt anzeigen',
+    nextProduct: 'Nächstes Produkt',
+    previousProduct: 'Vorheriges Produkt',
+    closeModal: 'Schließen'
   },
   limits: {
     freeTrialRemaining: 'Kostenlose Testversion: {{count}} Fragen übrig',
@@ -131,12 +140,12 @@ export default {
   },
   loading: {
     messages: [
-      "Einen Moment noch, wir entdecken die passendsten Produkte für Sie.",
-      "NeosBuy möchte Ihnen stets die besten Produkte anbieten, fast fertig.",
-      "Wir bereiten personalisierte Empfehlungen für Sie vor, bitte haben Sie Geduld.",
-      "Wir bereiten zuverlässige Ergebnisse vor, gleich geht es weiter.",
+      "Einen Moment bitte, wir entdecken die besten Produkte für Sie.",
+      "NeosBuy möchte immer die besten Produkte anbieten, fast fertig.",
+      "Wir bereiten personalisierte Empfehlungen vor, bitte haben Sie Geduld.",
+      "Zuverlässige Ergebnisse werden vorbereitet, wir sind gleich zurück.",
       "Sie sind ganz nah dran, die gesuchten Produkte zu finden!",
-      "Wir führen letzte Anpassungen durch, um Ihnen die besten Angebote zu präsentieren."
+      "Letzte Anpassungen werden vorgenommen, um die besten Angebote für Sie aufzulisten."
     ]
   }
 } 

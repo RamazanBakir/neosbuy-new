@@ -27,7 +27,9 @@ export default {
     dontHaveAccount: 'Hesabın yok mu? Kayıt ol',
     enterEmailPassword: 'Lütfen email ve şifre girin',
     haveAccount: 'Zaten hesabın var mı? Giriş yap',
-    noAccount: 'Hesabın yok mu? Kayıt ol'
+    noAccount: 'Hesabın yok mu? Kayıt ol',
+    continueWithGoogle: 'Google ile Devam Et',
+    orContinueWithEmail: 'ya da e-posta ile devam et'
   },
   chat: {
     newChat: 'Yeni Sohbet',
@@ -54,7 +56,14 @@ export default {
     loginNow: 'giriş yapın',
     similarProducts: 'Benzer Ürünler',
     discountedProducts: 'İndirimli Ürünler',
-    bestSellers: 'En Çok Satanlar'
+    bestSellers: 'En Çok Satanlar',
+    ongoing: 'Devam ediyor',
+    copyError: 'Kopyalama hatası',
+    imageAlt: 'Ürün görseli',
+    viewProduct: 'Ürünü Görüntüle',
+    nextProduct: 'Sonraki Ürün',
+    previousProduct: 'Önceki Ürün',
+    closeModal: 'Kapat'
   },
   limits: {
     freeTrialRemaining: 'Ücretsiz deneme: {{count}} soru hakkınız kaldı',

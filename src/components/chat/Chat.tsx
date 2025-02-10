@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ChatMessage, BaseProduct, ChatSession } from '../../types/chat'
 import ChatMessages from './ChatMessages'
 import ChatInput from './ChatInput'
@@ -37,6 +37,19 @@ export default function Chat({
   // Get current session's messages
   const currentSession = sessions.find(s => s.id === activeSessionId)
   const currentMessages = currentSession?.messages || []
+
+  // Başlangıç mesajını göstermek için
+  useEffect(() => {
+    if (!currentMessages.length && activeSessionId) {
+      const welcomeMessage: ChatMessage = {
+        id: Date.now().toString(),
+        type: 'assistant',
+        content: t('chat.howCanIHelpYouToday'),
+        timestamp: new Date()
+      }
+      onUpdateSession(activeSessionId, welcomeMessage)
+    }
+  }, [activeSessionId, currentMessages.length])
 
   const mapProduct = (product: any): BaseProduct => ({
     title: product.product_title || product.title || product.name,

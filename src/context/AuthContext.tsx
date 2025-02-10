@@ -73,8 +73,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const signOut = async () => {
+  const logout = async () => {
     await supabase.auth.signOut()
+    setUser(null)
+    localStorage.removeItem('chat_sessions')
+    localStorage.removeItem('active_session_id')
+    localStorage.removeItem('slide_states')
+    localStorage.removeItem('view_modes')
   }
 
   const signInWithGoogle = async () => {
@@ -111,7 +116,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading,
     signUp,
     signIn,
-    signOut,
+    signOut: logout,
     signInWithGoogle
   }), [user, loading]) // eslint-disable-line react-hooks/exhaustive-deps için bunların belirtilmesi gerekiyor
 

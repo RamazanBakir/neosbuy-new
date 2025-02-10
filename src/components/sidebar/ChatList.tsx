@@ -19,10 +19,7 @@ export default function ChatList({ sessions, activeSessionId, onSelectSession }:
         >
           <div className="flex items-center w-full">
             <span className="text-sm font-medium text-gray-900 dark:text-gray-100 flex-1">
-              {session.sessionId 
-                ? `Sohbet #${session.sessionId.slice(0, 8)}`
-                : 'Yeni Sohbet'
-              }
+              {session.title || t('chat.newChatTitle')}
             </span>
             {session.sessionId && (
               <span className="ml-2 px-2 py-1 text-xs bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded-full">

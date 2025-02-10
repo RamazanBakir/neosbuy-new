@@ -366,7 +366,6 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
               {message.type === 'assistant' && message.messageType === 'products' && Array.isArray(message.content) ? (
                 renderProductList(message.content, message.id)
               ) : (
-
                 <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[85%] sm:max-w-[75%] md:max-w-[65%] rounded-lg px-4 py-2 ${
                     message.type === 'user' 
@@ -413,17 +412,22 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
               )}
             </div>
           ))}
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="bg-gray-100 dark:bg-[#444654] rounded-lg px-4 py-3 max-w-[85%] sm:max-w-[75%] md:max-w-[65%]">
+                <div className="flex items-center space-x-3">
+                  <LoadingDots />
+                  {displayedMessage && (
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      {displayedMessage}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </div>
-        
-        {isLoading && (
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-center space-x-2 text-gray-500 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg">
-              <LoadingDots />
-              <p className="text-sm">{displayedMessage}</p>
-            </div>
-          </div>
-        )}
       </div>
       
       {selectedImage && (

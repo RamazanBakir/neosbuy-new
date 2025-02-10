@@ -27,7 +27,9 @@ export default {
     dontHaveAccount: "Don't have an account? Sign up",
     enterEmailPassword: 'Please enter email and password',
     haveAccount: 'Already have an account? Sign in',
-    noAccount: "Don't have an account? Sign up"
+    noAccount: "Don't have an account? Sign up",
+    continueWithGoogle: 'Continue with Google',
+    orContinueWithEmail: 'or continue with email',
   },
   chat: {
     newChat: 'New Chat',
@@ -54,7 +56,14 @@ export default {
     loginNow: 'login now',
     similarProducts: 'Similar Products',
     discountedProducts: 'Discounted Products',
-    bestSellers: 'Best Sellers'
+    bestSellers: 'Best Sellers',
+    ongoing: 'Ongoing',
+    copyError: 'Copy error',
+    imageAlt: 'Product image',
+    viewProduct: 'View Product',
+    nextProduct: 'Next Product',
+    previousProduct: 'Previous Product',
+    closeModal: 'Close'
   },
   limits: {
     freeTrialRemaining: 'Free trial: {{count}} questions remaining',
@@ -137,12 +146,12 @@ export default {
   },
   loading: {
     messages: [
-      "Just a moment, we're discovering the most suitable products for you.",
+      "Just a moment, we're discovering the best products for you.",
       "NeosBuy always aims to offer the best products, almost there.",
-      "We're preparing personalized recommendations for you, please be patient.",
+      "We're preparing personalized recommendations, please be patient.",
       "Preparing reliable results, we'll be right back.",
       "You're very close to finding the products you're looking for!",
-      "Making final touches to list the best offers for you."
+      "Final touches are being made to list the best offers for you."
     ]
   }
 } 

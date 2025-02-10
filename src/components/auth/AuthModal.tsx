@@ -108,7 +108,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-white text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50 font-medium"
                 >
                   <GoogleIcon className="h-5 w-5 text-gray-700" />
-                  Google ile Devam Et
+                  {t('auth.continueWithGoogle')}
                 </button>
 
                 <div className="relative">
@@ -116,7 +116,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     <div className="w-full border-t border-gray-200"></div>
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-4 bg-white text-gray-500">ya da e-posta ile devam et</span>
+                    <span className="px-4 bg-white text-gray-500">
+                      {t('auth.orContinueWithEmail')}
+                    </span>
                   </div>
                 </div>
 
@@ -138,7 +140,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
                   <div>
                     <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                      Şifre
+                      {t('auth.password')}
                     </label>
                     <div className="relative">
                       <input
