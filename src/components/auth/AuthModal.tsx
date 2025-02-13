@@ -125,16 +125,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 <div className="space-y-4">
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      E-posta
+                      E-posta / Kullanıcı Adı
                     </label>
                     <input
                       id="email"
-                      type="email"
+                      type="text"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       disabled={loading}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                      placeholder="ornek@email.com"
+                      placeholder="ornek@email.com veya kullanıcı adı"
                     />
                   </div>
 

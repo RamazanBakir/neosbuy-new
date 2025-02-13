@@ -35,11 +35,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return SHA256(password).toString()
   }
 
+  const formatEmail = (input: string): string => {
+    return input.includes('@') ? input : `${input}@neosbuy.com`
+  }
+
   const signUp = async (email: string, password: string) => {
     try {
+      const formattedEmail = formatEmail(email)
       const hashedPassword = hashPassword(password)
       const { error } = await supabase.auth.signUp({
-        email,
+        email: formattedEmail,
         password: hashedPassword
       })
       if (error) {
@@ -55,9 +60,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
+      const formattedEmail = formatEmail(email)
       const hashedPassword = hashPassword(password)
       const { error } = await supabase.auth.signInWithPassword({
-        email,
+        email: formattedEmail,
         password: hashedPassword
       })
 
