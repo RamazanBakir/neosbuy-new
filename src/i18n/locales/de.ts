@@ -23,13 +23,16 @@ export default {
     forgotPassword: 'Passwort vergessen?',
     googleSignIn: 'Mit Google fortfahren',
     orContinueWith: 'oder mit E-Mail fortfahren',
-    alreadyHaveAccount: 'Bereits ein Konto? Anmelden',
-    dontHaveAccount: 'Kein Konto? Registrieren',
     enterEmailPassword: 'Bitte E-Mail und Passwort eingeben',
-    haveAccount: 'Bereits ein Konto? Anmelden',
-    noAccount: 'Kein Konto? Registrieren',
     continueWithGoogle: 'Weiter mit Google',
-    orContinueWithEmail: 'oder weiter mit E-Mail'
+    orContinueWithEmail: 'oder weiter mit E-Mail',
+    or: 'oder',
+    emailPlaceholder: 'Geben Sie Ihre E-Mail ein',
+    passwordPlaceholder: 'Geben Sie Ihr Passwort ein',
+    login: 'Anmelden',
+    register: 'Registrieren',
+    needAccount: 'Kein Konto? Registrieren',
+    alreadyHaveAccount: 'Bereits ein Konto? Anmelden'
   },
   chat: {
     newChat: 'Neuer Chat',

@@ -1,16 +1,23 @@
 import { useEffect, useRef } from 'react'
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { useTranslation } from 'react-i18next'
+
+interface ContextMenuItem {
+  label: string
+  onClick: () => void
+  icon?: React.ComponentType<{ className?: string }>
+  className?: string
+}
 
 interface ContextMenuProps {
   x: number
   y: number
   onClose: () => void
-  onEdit: () => void
-  onDelete: () => void
+  items: ContextMenuItem[]
 }
 
-export default function ContextMenu({ x, y, onClose, onEdit, onDelete }: ContextMenuProps) {
+export default function ContextMenu({ x, y, onClose, items }: ContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null)
+  const { t } = useTranslation()
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -26,27 +33,28 @@ export default function ContextMenu({ x, y, onClose, onEdit, onDelete }: Context
   return (
     <div
       ref={menuRef}
-      className="fixed bg-white shadow-lg rounded-lg py-1 z-50 border border-gray-200"
+      className="fixed bg-white dark:bg-gray-800 shadow-lg rounded-lg py-1 z-50 border border-gray-200 dark:border-gray-700"
       style={{
         left: x,
         top: y,
         minWidth: '160px'
       }}
     >
-      <button
-        onClick={onEdit}
-        className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-      >
-        <PencilIcon className="h-4 w-4 mr-2" />
-        Düzenle
-      </button>
-      <button
-        onClick={onDelete}
-        className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-      >
-        <TrashIcon className="h-4 w-4 mr-2" />
-        Sil
-      </button>
+      {items.map((item, index) => (
+        <button
+          key={index}
+          onClick={() => {
+            item.onClick()
+            onClose()
+          }}
+          className={`w-full flex items-center px-4 py-2 text-sm ${
+            item.className || 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+          }`}
+        >
+          {item.icon && <item.icon className="h-4 w-4 mr-2" />}
+          {t(item.label)}
+        </button>
+      ))}
     </div>
   )
 } 

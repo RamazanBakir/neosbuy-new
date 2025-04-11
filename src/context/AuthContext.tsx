@@ -98,8 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             access_type: 'offline',
             prompt: 'consent',
           },
-          skipBrowserRedirect: false,
-          flowType: 'pkce'
+          skipBrowserRedirect: false
         }
       })
       
@@ -115,8 +114,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
   
-  
-
   const value = useMemo(() => ({
     user,
     loading,

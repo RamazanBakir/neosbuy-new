@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react'
+import { ReactNode, useState, Dispatch, SetStateAction } from 'react'
 import Sidebar from './Sidebar'
 import Header from './Header'
 import { ChatSession } from '../../types/chat'
@@ -11,6 +11,10 @@ interface LayoutProps {
   onSessionSelect: (sessionId: string) => void
   onUpdateSessionTitle: (sessionId: string, title: string) => void
   onDeleteSession: (sessionId: string) => void
+  showLoginModal: boolean
+  setShowLoginModal: Dispatch<SetStateAction<boolean>>
+  showRegisterModal: boolean
+  setShowRegisterModal: Dispatch<SetStateAction<boolean>>
 }
 
 export default function Layout({ 
@@ -20,7 +24,11 @@ export default function Layout({
   onNewSession, 
   onSessionSelect, 
   onUpdateSessionTitle, 
-  onDeleteSession 
+  onDeleteSession,
+  showLoginModal,
+  setShowLoginModal,
+  showRegisterModal,
+  setShowRegisterModal
 }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
@@ -45,15 +53,22 @@ export default function Layout({
             onClose={() => setIsSidebarOpen(false)} 
             onUpdateSessionTitle={onUpdateSessionTitle}
             onDeleteSession={onDeleteSession}
+            showLoginModal={showLoginModal}
+            setShowLoginModal={setShowLoginModal}
+            showRegisterModal={showRegisterModal}
+            setShowRegisterModal={setShowRegisterModal}
           />
         </div>
       )}
-
+      
       {/* Main Content */}
       <div className="flex-1 flex flex-col w-full">
         <Header 
           onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} 
-          isSidebarOpen={isSidebarOpen}
+          showLoginModal={showLoginModal}
+          setShowLoginModal={setShowLoginModal}
+          showRegisterModal={showRegisterModal}
+          setShowRegisterModal={setShowRegisterModal}
         />
         <main className="flex-1 overflow-auto bg-white dark:bg-[#343541]">
           {children}

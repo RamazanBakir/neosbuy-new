@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, Dispatch, SetStateAction } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { ChatSession } from '../../types/chat'
 import AuthModal from '../auth/AuthModal'
@@ -24,10 +24,26 @@ const tools = [
 ]
 
 const others = [
-  { icon: Square2StackIcon, label: 'sidebar.extension' },
-  { icon: QuestionMarkCircleIcon, label: 'sidebar.support' },
-  { icon: Cog6ToothIcon, label: 'sidebar.pricingPlans' },
-  { icon: Cog6ToothIcon, label: 'sidebar.profileSettings' }
+  { 
+    icon: Square2StackIcon, 
+    label: 'sidebar.extension',
+    onClick: () => {}
+  },
+  { 
+    icon: QuestionMarkCircleIcon, 
+    label: 'sidebar.support',
+    onClick: () => window.location.href = 'mailto:help@neosbuy.app'
+  },
+  { 
+    icon: Cog6ToothIcon, 
+    label: 'sidebar.pricingPlans',
+    onClick: () => {}
+  },
+  { 
+    icon: Cog6ToothIcon, 
+    label: 'sidebar.profileSettings',
+    onClick: () => {}
+  }
 ]
 
 interface SidebarProps {
@@ -38,6 +54,10 @@ interface SidebarProps {
   onUpdateSessionTitle: (sessionId: string, title: string) => void
   onDeleteSession: (sessionId: string) => void
   onClose: () => void
+  showLoginModal: boolean
+  setShowLoginModal: Dispatch<SetStateAction<boolean>>
+  showRegisterModal: boolean
+  setShowRegisterModal: Dispatch<SetStateAction<boolean>>
 }
 
 export default function Sidebar({ 
@@ -47,7 +67,11 @@ export default function Sidebar({
   onNewSession,
   onUpdateSessionTitle,
   onDeleteSession,
-  onClose 
+  onClose,
+  showLoginModal,
+  setShowLoginModal,
+  showRegisterModal,
+  setShowRegisterModal
 }: SidebarProps) {
   const { user } = useAuth()
   const [isAuthOpen, setIsAuthOpen] = useState(false)
@@ -231,34 +255,16 @@ export default function Sidebar({
             {t('sidebar.others')}
           </h3>
           <div className="mt-2 space-y-1">
-            <button
-              className="flex w-full items-center px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-              onClick={() => {/* handle click */}}
-            >
-              <Square2StackIcon className="h-5 w-5 mr-2" />
-              {t('sidebar.extension')}
-            </button>
-            <button
-              className="flex w-full items-center px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-              onClick={() => {/* handle click */}}
-            >
-              <QuestionMarkCircleIcon className="h-5 w-5 mr-2" />
-              {t('sidebar.support')}
-            </button>
-            <button
-              className="flex w-full items-center px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-              onClick={() => {/* handle click */}}
-            >
-              <ChatBubbleLeftIcon className="h-5 w-5 mr-2" />
-              {t('sidebar.pricingPlans')}
-            </button>
-            <button
-              className="flex w-full items-center px-2 py-1.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-              onClick={() => setIsSettingsOpen(true)}
-            >
-              <Cog6ToothIcon className="h-5 w-5 mr-2" />
-              {t('sidebar.profileSettings')}
-            </button>
+            {others.map((item, index) => (
+              <button
+                key={index}
+                onClick={item.onClick}
+                className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
+              >
+                <item.icon className="h-5 w-5" />
+                <span>{t(item.label)}</span>
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -278,17 +284,19 @@ export default function Sidebar({
           x={contextMenu.x}
           y={contextMenu.y}
           onClose={() => setContextMenu(null)}
-          onEdit={() => {
-            const session = sessions.find(s => s.id === contextMenu.sessionId)
-            if (session) {
-              handleEditStart(session)
+          items={[
+            {
+              label: t('common.edit'),
+              onClick: () => {
+                setEditingSessionId(contextMenu.sessionId)
+                setEditTitle(sessions.find(s => s.id === contextMenu.sessionId)?.title || '')
+              }
+            },
+            {
+              label: t('common.delete'),
+              onClick: () => onDeleteSession(contextMenu.sessionId)
             }
-            setContextMenu(null)
-          }}
-          onDelete={() => {
-            onDeleteSession(contextMenu.sessionId)
-            setContextMenu(null)
-          }}
+          ]}
         />
       )}
     </aside>

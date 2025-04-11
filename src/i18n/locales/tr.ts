@@ -23,13 +23,16 @@ export default {
     forgotPassword: 'Şifremi Unuttum',
     googleSignIn: 'Google ile Devam Et',
     orContinueWith: 'ya da e-posta ile devam et',
-    alreadyHaveAccount: 'Zaten hesabın var mı? Giriş yap',
-    dontHaveAccount: 'Hesabın yok mu? Kayıt ol',
     enterEmailPassword: 'Lütfen email ve şifre girin',
-    haveAccount: 'Zaten hesabın var mı? Giriş yap',
-    noAccount: 'Hesabın yok mu? Kayıt ol',
     continueWithGoogle: 'Google ile Devam Et',
-    orContinueWithEmail: 'ya da e-posta ile devam et'
+    orContinueWithEmail: 'ya da e-posta ile devam et',
+    or: 'veya',
+    emailPlaceholder: 'E-posta adresinizi girin',
+    passwordPlaceholder: 'Şifrenizi girin',
+    login: 'Giriş Yap',
+    register: 'Kayıt Ol',
+    needAccount: 'Hesabın yok mu? Kayıt ol',
+    alreadyHaveAccount: 'Zaten hesabın var mı? Giriş yap'
   },
   chat: {
     newChat: 'Yeni Sohbet',

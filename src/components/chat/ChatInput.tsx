@@ -49,21 +49,18 @@ export default function ChatInput({ onSubmit }: ChatInputProps) {
             placeholder-gray-500 dark:placeholder-gray-400"
           placeholder={t('input.placeholder')}
           rows={1}
-          disabled={isLoading}
         />
-        <button 
+        <button
           onClick={handleSubmit}
           disabled={isLoading || !message.trim()}
-          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 
-            text-gray-400 hover:text-gray-600 
-            dark:text-gray-400 dark:hover:text-gray-200 
-            disabled:opacity-50"
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-500 hover:text-gray-700 
+            dark:text-gray-400 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <PaperAirplaneIcon className="h-5 w-5" />
+          <PaperAirplaneIcon className="w-5 h-5" />
         </button>
       </div>
       {error && (
-        <p className="text-red-500 text-sm mt-2">{error}</p>
+        <div className="mt-2 text-sm text-red-500">{error}</div>
       )}
     </div>
   )

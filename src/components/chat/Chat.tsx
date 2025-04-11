@@ -26,7 +26,7 @@ export default function Chat({
   setSessions,
   setActiveSessionId 
 }: ChatProps) {
-  const { user, fetchSessionHistory } = useAuth()
+  const { user } = useAuth()
   const { hasReachedLimit, incrementCount, remainingQuestions } = useQuestionLimit()
   const [isLoading, setIsLoading] = useState(false)
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
@@ -63,6 +63,11 @@ export default function Chat({
   })
 
   const handleNewMessage = async (content: string) => {
+    if (!user) {
+      setIsAuthModalOpen(true)
+      return
+    }
+
     if (hasReachedLimit) {
       setIsLimitExceededOpen(true)
       return
@@ -78,8 +83,7 @@ export default function Chat({
           id: Date.now().toString(),
           title: t('chat.newChatTitle'),
           createdAt: new Date(),
-          messages: [],
-          sessionId: null
+          messages: []
         }
         setSessions(prev => [newSession, ...prev])
         setActiveSessionId(newSession.id)
@@ -101,20 +105,6 @@ export default function Chat({
       try {
         incrementCount()
         const response = await searchProducts(content, currentSessionId)
-        
-        if (response.sessionId) {
-          setSessions(prev => prev.map(session => {
-            if (session.id === currentSessionId) {
-              return { 
-                ...session, 
-                sessionId: response.sessionId,
-                title: `Sohbet #${response.sessionId.slice(0, 8)}`,
-                messages: session.messages
-              }
-            }
-            return session
-          }))
-        }
         
         const aiMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
@@ -168,9 +158,9 @@ export default function Chat({
       </div>
 
       <div className="relative max-w-4xl mx-auto w-full px-4 pb-4">
-        {!user && !hasReachedLimit && (
+        {!user && (
           <div className="bg-blue-50 p-4 text-sm text-blue-700 mb-4 rounded-lg">
-            {t('chat.freeTrial', { count: remainingQuestions })}
+            {t('limits.loginOrRegister')}
             <button onClick={() => setIsAuthModalOpen(true)} className="font-medium underline hover:text-blue-800 ml-1">
               {t('chat.loginNow')}
             </button>

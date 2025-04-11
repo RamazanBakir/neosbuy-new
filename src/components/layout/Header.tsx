@@ -1,21 +1,27 @@
-import { Bars3Icon, SunIcon, MoonIcon, UserIcon } from '@heroicons/react/24/outline'
-import { useTheme } from '../../context/ThemeContext'
-import { useState } from 'react'
+import { Bars3Icon, UserIcon } from '@heroicons/react/24/outline'
 import { useAuth } from '../../context/AuthContext'
 import AuthModal from '../auth/AuthModal'
 import ProfileDropdown from './ProfileDropdown'
 import LanguageSwitcher from '../common/LanguageSwitcher'
 import { ThemeToggle } from '../common/ThemeToggle'
+import { Dispatch, SetStateAction } from 'react'
 
 interface HeaderProps {
   onMenuClick: () => void
-  isSidebarOpen: boolean
+  showLoginModal: boolean
+  setShowLoginModal: Dispatch<SetStateAction<boolean>>
+  showRegisterModal: boolean
+  setShowRegisterModal: Dispatch<SetStateAction<boolean>>
 }
 
-export default function Header({ onMenuClick }: HeaderProps) {
-  const { theme, toggleTheme } = useTheme()
+export default function Header({ 
+  onMenuClick, 
+  showLoginModal, 
+  setShowLoginModal,
+  showRegisterModal,
+  setShowRegisterModal
+}: HeaderProps) {
   const { user, signOut } = useAuth()
-  const [isAuthOpen, setIsAuthOpen] = useState(false)
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 h-16">
@@ -40,7 +46,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
             />
           ) : (
             <button
-              onClick={() => setIsAuthOpen(true)}
+              onClick={() => setShowLoginModal(true)}
               className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100"
             >
               <UserIcon className="h-5 w-5" />
@@ -51,8 +57,14 @@ export default function Header({ onMenuClick }: HeaderProps) {
       </div>
 
       <AuthModal 
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        initialMode="login"
+      />
+      <AuthModal 
+        isOpen={showRegisterModal}
+        onClose={() => setShowRegisterModal(false)}
+        initialMode="register"
       />
     </header>
   )

@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react'
 import { ChatMessage, ChatSession } from './types/chat'
 import AuthCallback from './components/auth/AuthCallback'
 import { useTranslation } from 'react-i18next'
+import BetaAnnouncement from './components/common/BetaAnnouncement'
 
 export default function App() {
   const { t } = useTranslation()
@@ -30,6 +31,14 @@ export default function App() {
     if (savedShowTools === null) return true
     return JSON.parse(savedShowTools)
   })
+
+  const [showBetaAnnouncement, setShowBetaAnnouncement] = useState(() => {
+    const hasSeenAnnouncement = localStorage.getItem('has_seen_beta_announcement')
+    return !hasSeenAnnouncement && !user
+  })
+
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  const [showRegisterModal, setShowRegisterModal] = useState(false)
 
   useEffect(() => {
     localStorage.setItem('show_tools', JSON.stringify(showTools))
@@ -104,10 +113,29 @@ export default function App() {
     }
   }
 
+  const handleCloseBetaAnnouncement = () => {
+    setShowBetaAnnouncement(false)
+    localStorage.setItem('has_seen_beta_announcement', 'true')
+  }
+
+  const handleLogin = () => {
+    setShowLoginModal(true)
+  }
+
+  const handleRegister = () => {
+    setShowRegisterModal(true)
+  }
+
   return (
     <Router>
       <ThemeProvider>
         <AuthProvider>
+          <BetaAnnouncement
+            isOpen={showBetaAnnouncement}
+            onClose={handleCloseBetaAnnouncement}
+            onLogin={handleLogin}
+            onRegister={handleRegister}
+          />
           <Routes>
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route
@@ -127,6 +155,10 @@ export default function App() {
                   }}
                   onUpdateSessionTitle={handleUpdateSessionTitle}
                   onDeleteSession={handleDeleteSession}
+                  showLoginModal={showLoginModal}
+                  setShowLoginModal={setShowLoginModal}
+                  showRegisterModal={showRegisterModal}
+                  setShowRegisterModal={setShowRegisterModal}
                 >
                   <div className="flex flex-col h-full">
                     <div className="flex-1">
