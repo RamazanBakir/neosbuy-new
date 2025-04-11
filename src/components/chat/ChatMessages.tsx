@@ -20,7 +20,7 @@ import { useSpeech } from '../../hooks/useSpeech'
 import LanguageMenu from '../common/LanguageMenu'
 import { useTranslation } from 'react-i18next'
 import ProductDetailModal from '../common/ProductDetailModal'
-import { useTranslation as useI18nTranslation } from 'react-i18next'
+import { useTranslation as useCustomTranslation } from '../../hooks/useTranslation'
 
 const LoadingDots = () => (
   <div className="flex space-x-1">
@@ -39,7 +39,7 @@ interface ChatMessagesProps {
 
 export default function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
   const { t } = useTranslation()
-  const { translate, isTranslating } = useTranslation()
+  const { translate, isTranslating } = useCustomTranslation()
   const displayedMessage = useLoadingMessages()
   const [slideStates, setSlideStates] = useState<Record<string, number>>(() => {
     const saved = localStorage.getItem('slide_states')
@@ -55,6 +55,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
   const { speak, stop, isSpeaking } = useSpeech()
   const [languageMenu, setLanguageMenu] = useState<{ x: number; y: number } | null>(null)
   const [selectedText, setSelectedText] = useState<string | null>(null)
+  const [translatedText, setTranslatedText] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [selectedProduct, setSelectedProduct] = useState<BaseProduct | null>(null)
   const [isSliding, setIsSliding] = useState(false)
@@ -78,6 +79,30 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
     }
     scrollToBottom()
   }, [messages, isLoading])
+
+  useEffect(() => {
+    const savedModes = localStorage.getItem('view_modes')
+    if (savedModes) {
+      setViewModes(JSON.parse(savedModes))
+    }
+
+    // Mobil görünümde varsayılan olarak list view'ı ayarla
+    const handleResize = () => {
+      if (window.innerWidth < 768) { // md breakpoint
+        setViewMode('list')
+      }
+    }
+
+    // İlk yüklemede kontrol et
+    handleResize()
+
+    // Ekran boyutu değiştiğinde kontrol et
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
 
   const handleImageClick = (imageUrl: string, alt: string) => {
     setSelectedImage({ url: imageUrl, alt })
@@ -103,6 +128,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
   const handleTranslateClick = (event: React.MouseEvent, content: string) => {
     event.preventDefault()
     setSelectedText(content)
+    setTranslatedText(null) // Reset translated text when starting new translation
     const rect = event.currentTarget.getBoundingClientRect()
     setLanguageMenu({ x: rect.left, y: rect.bottom + 5 })
   }
@@ -112,8 +138,7 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
     
     try {
       const translatedText = await translate(selectedText, langCode)
-      // İsteğe bağlı: Çeviriyi göstermek için bir toast veya modal kullanılabilir
-      console.log('Çeviri:', translatedText)
+      setTranslatedText(translatedText)
     } catch (error) {
       console.error('Çeviri hatası:', error)
     } finally {
@@ -374,8 +399,17 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
                         ? 'bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400'
                         : 'bg-gray-100 dark:bg-[#444654] text-gray-900 dark:text-gray-100'
                   }`}>
-                    {typeof message.content === 'string' && (
-                      <p className="text-sm">{message.content}</p>
+                    {typeof message.content === 'string' ? (
+                      <>
+                        <p className="text-sm">{message.content}</p>
+                        {translatedText && selectedText === message.content && (
+                          <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{translatedText}</p>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <p className="text-sm">{JSON.stringify(message.content, null, 2)}</p>
                     )}
                     {message.type === 'assistant' && !message.messageType && (
                       <div className="mt-2 flex items-center space-x-2 text-xs text-gray-500">
@@ -462,6 +496,8 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
         onPrevious={handlePreviousProduct}
         hasNext={currentProductIndex < currentProducts.length - 1}
         hasPrevious={currentProductIndex > 0}
+        viewMode={viewMode}
+        setViewMode={(mode: 'grid' | 'list') => setViewMode(mode)}
       />
     </>
   )
