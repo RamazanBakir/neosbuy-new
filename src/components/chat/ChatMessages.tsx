@@ -59,7 +59,13 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [selectedProduct, setSelectedProduct] = useState<BaseProduct | null>(null)
   const [isSliding, setIsSliding] = useState(false)
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => {
+    // Mobil görünümde varsayılan olarak list view'ı ayarla
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return 'list'
+    }
+    return 'grid'
+  })
   const [currentProducts, setCurrentProducts] = useState<BaseProduct[]>([])
   const [currentProductIndex, setCurrentProductIndex] = useState<number>(0)
 
@@ -90,6 +96,12 @@ export default function ChatMessages({ messages, isLoading }: ChatMessagesProps)
     const handleResize = () => {
       if (window.innerWidth < 768) { // md breakpoint
         setViewMode('list')
+        // localStorage'a kaydet
+        const currentModes = JSON.parse(localStorage.getItem('view_modes') || '{}')
+        localStorage.setItem('view_modes', JSON.stringify({
+          ...currentModes,
+          default: 'list'
+        }))
       }
     }
 
